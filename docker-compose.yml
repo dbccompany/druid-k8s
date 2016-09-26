@@ -1,0 +1,126 @@
+version: '2'
+
+networks:
+  druid:
+    driver: bridge
+
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: zookeeper:latest
+    networks:
+      - druid
+    ports:
+      - 2180:2180
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    networks:
+      - druid
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: druid
+      MYSQL_USER: druid
+      MYSQL_PASSWORD: druid
+
+  druid:
+    build:
+      context: .
+    image: druid-base:0.9.1.1-1
+    environment:
+      S3_BUCKET: somebucket
+      ZK_HOST: zookeeper
+      ZK_PORT: 2181
+      AWS_ACCESS_KEY: somekey
+      AWS_SECRET_KEY: somesecret
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB: druid
+      MYSQL_USER: druid
+      MYSQL_PASS: druid
+
+  historical:
+    container_name: historical
+    networks:
+      - druid
+    ports:
+      - 7080:7080
+    extends:
+      service: druid
+    environment:
+      NODE_TYPE: historical
+      HISTORICAL_HOST: historical
+      HISTORICAL_PORT: 7080
+      JAVA_PROPERTIES: "-server -Xmx8g -Xms4g -XX:NewSize=2g -XX:MaxNewSize=2g -XX:MaxDirectMemorySize=32g -XX:+UseConcMarkSweepGC -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp/"
+    depends_on:
+      - zookeeper
+
+  middleManager:
+    container_name: middleManager
+    networks:
+      - druid
+    ports:
+      - 8081:8081
+    extends:
+      service: druid
+    environment:
+      NODE_TYPE: middleManager
+      MIDDLEMANAGER_HOST: middleManager
+      MIDDLEMANAGER_PORT: 8081
+      JAVA_PROPERTIES: "-server -Xmx64m -Xms64m -XX:+UseConcMarkSweepGC -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp/"
+    depends_on:
+      - zookeeper
+
+  coordinator:
+    container_name: coordinator
+    networks:
+      - druid
+    ports:
+      - 8282:8282
+    extends:
+      service: druid
+    environment:
+      NODE_TYPE: coordinator
+      COORDINATOR_HOST: historical
+      COORDINATOR_PORT: 8282
+      JAVA_PROPERTIES: "-server -Xmx2g -Xms1g -XX:NewSize=512m -XX:MaxNewSize=512m -XX:+UseG1GC -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp/"
+    depends_on:
+      - zookeeper
+      - mysql
+
+  broker:
+    container_name: broker
+    networks:
+      - druid
+    ports:
+      - 8080:8080
+    extends:
+      service: druid
+    environment:
+      NODE_TYPE: broker
+#      BROKER_HOST: broker
+      BROKER_PORT: 8080
+      JAVA_PROPERTIES: "-server -Xmx10g -Xms2g -XX:MaxDirectMemorySize=64g -XX:+UseConcMarkSweepGC -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp/"
+    depends_on:
+      - zookeeper
+      - mysql
+
+  overlord:
+    container_name: overlord
+    networks:
+      - druid
+    ports:
+      - 8181:8181
+    extends:
+      service: druid
+    environment:
+      NODE_TYPE: overlord
+      OVERLORD_HOST: overlord
+      OVERLORD_PORT: 8181
+      JAVA_PROPERTIES: "-server -Xmx1g -Xms1g -XX:NewSize=256m -XX:MaxNewSize=256m -XX:+UseConcMarkSweepGC -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp/"
+    depends_on:
+      - zookeeper
+      - mysql
