@@ -46,7 +46,7 @@ case $NODE_TYPE in
     sed -i \
       -e "s;__PROCESSING_BUFFER_SIZEBYTES__;${PROCESSING_BUFFER_SIZEBYTES:-1073741824};" \
       -e "s;__PROCESSING_NUMTHREADS__;${PROCESSING_NUMTHREADS:-2};" \
-      -e "s;__SEGMENT_CACHE_LOCATION__;${SEGMENT_CACHE_LOCATION:-'/mnt/persistent/zk_druid'};" \
+      -e "s;__SEGMENT_CACHE_LOCATION__;${SEGMENT_CACHE_LOCATION:-/mnt/persistent/zk_druid};" \
       -e "s;__SEGMENT_CACHE_MAXSIZE__;${SEGMENT_CACHE_MAXSIZE:-7000000000};" \
       $DRUID_ROOT/conf/$NODE_TYPE/runtime.properties
   ;;
@@ -56,7 +56,7 @@ case $NODE_TYPE in
       -e "s;__S3_BUCKET__;${S3_BUCKET};" \
       -e "s;__PROCESSING_BUFFER_SIZEBYTES__;${PROCESSING_BUFFER_SIZEBYTES:-536870912};" \
       -e "s;__PROCESSING_NUMTHREADS__;${PROCESSING_NUMTHREADS:-2};" \
-      -e "s;__SEGMENT_CACHE_LOCATION__;${SEGMENT_CACHE_LOCATION:-'/mnt/persistent/zk_druid'};" \
+      -e "s;__SEGMENT_CACHE_LOCATION__;${SEGMENT_CACHE_LOCATION:-/mnt/persistent/zk_druid};" \
       -e "s;__SEGMENT_CACHE_MAXSIZE__;${SEGMENT_CACHE_MAXSIZE:-0};" \
       $DRUID_ROOT/conf/$NODE_TYPE/runtime.properties
   ;;
