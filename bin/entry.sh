@@ -63,7 +63,7 @@ case $NODE_TYPE in
 
   overlord)
     sed -i \
-      -e "s;__S3_BUCKET__;${S3_BUCKET};"
+      -e "s;__S3_BUCKET__;${S3_BUCKET};" \
       $DRUID_ROOT/conf/$NODE_TYPE/runtime.properties
   ;;
 
