@@ -5,7 +5,7 @@
 DRUID_ROOT=/opt/druid
 
 # Allow to obtain programmatically HOSTNAME (for e.g. in AWS ECS)
-if [ ! -z ${HOSTNAME_COMMAND:-} ]; then
+if [[ ! -z ${HOSTNAME_COMMAND:-} ]]; then
   DRUID_HOST=$(eval $HOSTNAME_COMMAND)
 fi
 
