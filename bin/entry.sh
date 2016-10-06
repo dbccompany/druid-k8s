@@ -24,6 +24,7 @@ sed -i \
   -e "s;__DRUID_PORT__;${DRUID_PORT:-''};" \
   -e "s;__GROUPBY_MAXINTERMEDIATEROWS__;${GROUPBY_MAXINTERMEDIATEROWS:-50000};" \
   -e "s;__GROUPBY_MAXRESULTS__;${GROUPBY_MAXRESULTS:-500000};" \
+  -e "s;__MODULE_LIST__;${MODULE_LIST:-\"druid-s3-extensions\",\"druid-histogram\",\"mysql-metadata-storage\";}"
   $DRUID_ROOT/conf/_common/common.runtime.properties
 
 # Specific settings
