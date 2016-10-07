@@ -75,4 +75,7 @@ case $NODE_TYPE in
   ;;
 esac
 
+# Temporary workaround for temporary directory
+mkdir /mnt/tmp
+
 java $JAVA_PROPERTIES -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* io.druid.cli.Main server $NODE_TYPE
