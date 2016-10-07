@@ -75,7 +75,10 @@ case $NODE_TYPE in
   ;;
 esac
 
-# Temporary workaround for temporary directory
+# Temporary workaround for /tmp directory
 mkdir -p /mnt/tmp
+chmod 1777 /mnt/tmp
+rm -rf /tmp
+ln -s /mnt/tmp /tmp
 
 java $JAVA_PROPERTIES -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* io.druid.cli.Main server $NODE_TYPE
