@@ -12,7 +12,7 @@ fi
 # Common settings
 sed -i \
   -e "s;__ZK_HOST__;${ZK_HOST};" \
-  -e "s;__ZK_PORT__;${ZK_PORT:-'2180'};" \
+  -e "s;__ZK_PORT__;${ZK_PORT:-2180};" \
   -e "s;__MYSQL_HOST__;${MYSQL_HOST:-''};" \
   -e "s;__MYSQL_PORT__;${MYSQL_PORT:-''};" \
   -e "s;__MYSQL_DB__;${MYSQL_DB:-''};" \
@@ -22,6 +22,8 @@ sed -i \
   -e "s;__AWS_SECRET_KEY__;${AWS_SECRET_KEY:-''};" \
   -e "s;__DRUID_HOST__;${DRUID_HOST:-''};" \
   -e "s;__DRUID_PORT__;${DRUID_PORT:-''};" \
+  -e "s;__STATSD_HOST__;${STATSD_HOST:-127.0.0.1};" \
+  -e "s;__STATSD_PORT__;${STATSD_PORT:-8125};" \
   -e "s;__GROUPBY_MAXINTERMEDIATEROWS__;${GROUPBY_MAXINTERMEDIATEROWS:-50000};" \
   -e "s;__GROUPBY_MAXRESULTS__;${GROUPBY_MAXRESULTS:-500000};" \
   -e "s;__MODULE_LIST__;${MODULE_LIST:-\"druid-s3-extensions\",\"druid-histogram\",\"mysql-metadata-storage\"};" \
@@ -33,12 +35,13 @@ case $NODE_TYPE in
     sed -i \
       -e "s;__PROCESSING_BUFFER_SIZEBYTES__;${PROCESSING_BUFFER_SIZEBYTES:-2147483647};" \
       -e "s;__PROCESSING_NUMTHREADS__;${PROCESSING_NUMTHREADS:-2};" \
+      -e "s;__PROCESSING_NUMMERGEBUFFERS__;${PROCESSING_NUMMERGEBUFFERS:-2};" \
       $DRUID_ROOT/conf/$NODE_TYPE/runtime.properties
   ;;
 
   coordinator)
 #    sed -i \
-#      
+#
 #      $DRUID_ROOT/conf/$NODE_TYPE/runtime.properties
     echo "No settings specific to coordinator so far"
   ;;
@@ -47,6 +50,7 @@ case $NODE_TYPE in
     sed -i \
       -e "s;__PROCESSING_BUFFER_SIZEBYTES__;${PROCESSING_BUFFER_SIZEBYTES:-1073741824};" \
       -e "s;__PROCESSING_NUMTHREADS__;${PROCESSING_NUMTHREADS:-2};" \
+      -e "s;__PROCESSING_NUMMERGEBUFFERS__;${PROCESSING_NUMMERGEBUFFERS:-2};" \
       -e "s;__SEGMENT_CACHE_LOCATION__;${SEGMENT_CACHE_LOCATION:-/mnt/persistent/zk_druid};" \
       -e "s;__SEGMENT_CACHE_MAXSIZE__;${SEGMENT_CACHE_MAXSIZE:-7000000000};" \
       $DRUID_ROOT/conf/$NODE_TYPE/runtime.properties
@@ -57,6 +61,7 @@ case $NODE_TYPE in
       -e "s;__S3_BUCKET__;${S3_BUCKET};" \
       -e "s;__PROCESSING_BUFFER_SIZEBYTES__;${PROCESSING_BUFFER_SIZEBYTES:-536870912};" \
       -e "s;__PROCESSING_NUMTHREADS__;${PROCESSING_NUMTHREADS:-2};" \
+      -e "s;__PROCESSING_NUMMERGEBUFFERS__;${PROCESSING_NUMMERGEBUFFERS:-2};" \
       -e "s;__SEGMENT_CACHE_LOCATION__;${SEGMENT_CACHE_LOCATION:-/mnt/persistent/zk_druid};" \
       -e "s;__SEGMENT_CACHE_MAXSIZE__;${SEGMENT_CACHE_MAXSIZE:-0};" \
       $DRUID_ROOT/conf/$NODE_TYPE/runtime.properties
@@ -81,4 +86,6 @@ chmod 1777 /mnt/tmp
 rm -rf /tmp
 ln -s /mnt/tmp /tmp
 
-java $JAVA_PROPERTIES -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* io.druid.cli.Main server $NODE_TYPE
+cat $DRUID_ROOT/conf/_common/common.runtime.properties
+echo "Launcing process: java $JAVA_PROPERTIES -javaagent:$DRUID_ROOT/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar=1234:$DRUID_ROOT/conf/prometheus_javaagent.yaml -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* io.druid.cli.Main server $NODE_TYPE"
+java $JAVA_PROPERTIES -javaagent:$DRUID_ROOT/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar=1234:$DRUID_ROOT/conf/prometheus_javaagent.yaml -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* io.druid.cli.Main server $NODE_TYPE
