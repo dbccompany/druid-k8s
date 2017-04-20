@@ -24,6 +24,9 @@ sed -i \
   -e "s;__DRUID_PORT__;${DRUID_PORT:-''};" \
   -e "s;__STATSD_HOST__;${STATSD_HOST:-127.0.0.1};" \
   -e "s;__STATSD_PORT__;${STATSD_PORT:-8125};" \
+  -e "s;__STATSD_PREFIX__;${STATSD_PREFIX:-''};" \
+  -e "s;__STATSD_DELIMETER__;${STATSD_DELIMETER:-.};" \
+  -e "s;__STATSD_INCLUDE_HOST__;${STATSD_INCLUDE_HOST:-true};" \
   -e "s;__GROUPBY_MAXINTERMEDIATEROWS__;${GROUPBY_MAXINTERMEDIATEROWS:-50000};" \
   -e "s;__GROUPBY_MAXRESULTS__;${GROUPBY_MAXRESULTS:-500000};" \
   -e "s;__MODULE_LIST__;${MODULE_LIST:-\"druid-s3-extensions\",\"druid-histogram\",\"mysql-metadata-storage\"};" \
@@ -62,6 +65,7 @@ case $NODE_TYPE in
       -e "s;__PROCESSING_BUFFER_SIZEBYTES__;${PROCESSING_BUFFER_SIZEBYTES:-536870912};" \
       -e "s;__PROCESSING_NUMTHREADS__;${PROCESSING_NUMTHREADS:-2};" \
       -e "s;__PROCESSING_NUMMERGEBUFFERS__;${PROCESSING_NUMMERGEBUFFERS:-2};" \
+      -e "s;__WORKER_COUNT__;${WORKER_COUNT:-1};" \
       -e "s;__SEGMENT_CACHE_LOCATION__;${SEGMENT_CACHE_LOCATION:-/mnt/persistent/zk_druid};" \
       -e "s;__SEGMENT_CACHE_MAXSIZE__;${SEGMENT_CACHE_MAXSIZE:-0};" \
       $DRUID_ROOT/conf/$NODE_TYPE/runtime.properties
