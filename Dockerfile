@@ -20,7 +20,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ARG DRUID_VERSION=0.9.2
 ENV DRUID_HOME /opt/druid
 ENV DRUID_MAVEN_REPO https://metamx.artifactoryonline.com/metamx/libs-releases
-ENV PROMETHEUS_JAVAAGENT_VERSION=0.7
+ENV PROMETHEUS_JAVAAGENT_VERSION=0.9
 
 RUN wget -q -O - http://static.druid.io/artifacts/releases/druid-$DRUID_VERSION-bin.tar.gz | tar -xzf - -C /opt && \
     ln -s /opt/druid-$DRUID_VERSION $DRUID_HOME && \
