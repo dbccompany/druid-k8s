@@ -30,14 +30,10 @@ RUN wget -q -O - http://static.druid.io/artifacts/releases/druid-$DRUID_VERSION-
  && ln -s /opt/druid-$DRUID_VERSION $DRUID_HOME \
  && mkdir $DRUID_HOME/prometheus \
  && wget -q -O $DRUID_HOME/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$PROMETHEUS_JAVAAGENT_VERSION/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar \
- && rm -rf $DRUID_HOME/conf/
-
-# Put configuration files
-#ADD conf $DRUID_HOME/conf/
-ADD extras/prometheus_javaagent.yaml $DRUID_HOME/conf/
+ && rm -rf $DRUID_HOME/conf/ \
 
 # Install extension libraries
-RUN java -cp "$DRUID_HOME/lib/*" \
+ && java -cp "$DRUID_HOME/lib/*" \
          -Ddruid.extensions.directory="$DRUID_HOME/extensions/" \
          -Ddruid.extensions.hadoopDependenciesDir="$DRUID_HOME/hadoop-dependencies/" \
          io.druid.cli.Main tools pull-deps \
@@ -46,9 +42,13 @@ RUN java -cp "$DRUID_HOME/lib/*" \
          -c io.druid.extensions.contrib:druid-rabbitmq:$DRUID_VERSION \
          -c io.druid.extensions.contrib:druid-kafka-eight-simple-consumer:$DRUID_VERSION \
          -c io.druid.extensions.contrib:druid-parquet-extensions:$DRUID_VERSION \
-         -c io.druid.extensions.contrib:druid-distinctcount:$DRUID_VERSION && \
-    # Moving mysql connector to /lib, so can it be reused by other parts of druid
-    mv $DRUID_HOME/extensions/mysql-metadata-storage/mysql-connector-java-*.jar $DRUID_HOME/lib
+         -c io.druid.extensions.contrib:druid-distinctcount:$DRUID_VERSION \
+ # Moving mysql connector to /lib, so can it be reused by other parts of druid
+ && mv $DRUID_HOME/extensions/mysql-metadata-storage/mysql-connector-java-*.jar $DRUID_HOME/lib
+
+# Put configuration files
+#ADD conf $DRUID_HOME/conf/
+ADD extras/prometheus_javaagent.yaml $DRUID_HOME/conf/
 
 ######## Final phase
 
