@@ -38,20 +38,36 @@ RUN wget -q -O - http://static.druid.io/artifacts/releases/druid-$DRUID_VERSION-
          -Ddruid.extensions.hadoopDependenciesDir="$DRUID_HOME/hadoop-dependencies/" \
          io.druid.cli.Main tools pull-deps \
          -c io.druid.extensions:mysql-metadata-storage:$DRUID_VERSION \
-         -c io.druid.extensions.contrib:statsd-emitter:$DRUID_VERSION \
-         -c io.druid.extensions.contrib:druid-rabbitmq:$DRUID_VERSION \
-         -c io.druid.extensions.contrib:druid-kafka-eight-simple-consumer:$DRUID_VERSION \
-         -c io.druid.extensions.contrib:druid-parquet-extensions:$DRUID_VERSION \
+         # Installing contrib extensions
+         -c io.druid.extensions.contrib:ambari-metrics-emitter:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-azure-extensions:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-cassandra-storage:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-cloudfiles-extensions:$DRUID_VERSION \
          -c io.druid.extensions.contrib:druid-distinctcount:$DRUID_VERSION \
+#         -c io.druid.extensions.contrib:druid-kafka-eight-simpleConsumer:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-orc-extensions:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-parquet-extensions:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-rabbitmq:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-redis-cache:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-rocketmq:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-time-min-max:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-google-extensions:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:sqlserver-metadata-storage:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:graphite-emitter:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:statsd-emitter:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:kafka-emitter:$DRUID_VERSION \
+         -c io.druid.extensions.contrib:druid-thrift-extensions:$DRUID_VERSION \
  # Moving mysql connector to /lib, so can it be reused by other parts of druid
- && mv $DRUID_HOME/extensions/mysql-metadata-storage/mysql-connector-java-*.jar $DRUID_HOME/lib
+ && mv $DRUID_HOME/extensions/mysql-metadata-storage/mysql-connector-java-*.jar $DRUID_HOME/lib \
+ # Cleaning up
+ && rm -rfv ~/.m2
 
 # Put configuration files
 #ADD conf $DRUID_HOME/conf/
 ADD extras/prometheus_javaagent.yaml $DRUID_HOME/conf/
 
 ######## Final phase
-
-#ADD bin/entry.sh $DRUID_HOME/bin/
-#ENTRYPOINT $DRUID_HOME/bin/entry.sh
+WORKDIR $DRUID_HOME
+ADD bin/entry-alt.sh $DRUID_HOME/bin/entry.sh
+ENTRYPOINT /bin/bash bin/entry.sh
 
