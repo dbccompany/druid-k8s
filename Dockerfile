@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 
 #### Settings ####
-ARG DRUID_VERSION=0.12.0
+ARG DRUID_VERSION=0.12.1
 ENV DRUID_HOME /opt/druid
 ENV DRUID_MAVEN_REPO https://metamx.artifactoryonline.com/metamx/libs-releases
 ENV PROMETHEUS_JAVAAGENT_VERSION=0.9
@@ -30,10 +30,10 @@ RUN wget -q -O - http://static.druid.io/artifacts/releases/druid-$DRUID_VERSION-
  && ln -s /opt/druid-$DRUID_VERSION $DRUID_HOME \
  && mkdir $DRUID_HOME/prometheus \
  && wget -q -O $DRUID_HOME/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$PROMETHEUS_JAVAAGENT_VERSION/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar \
- && rm -rf $DRUID_HOME/conf/ \
+ && rm -rf $DRUID_HOME/conf/
 
 # Install extension libraries
- && java -cp "$DRUID_HOME/lib/*" \
+RUN java -cp "$DRUID_HOME/lib/*" \
          -Ddruid.extensions.directory="$DRUID_HOME/extensions/" \
          -Ddruid.extensions.hadoopDependenciesDir="$DRUID_HOME/hadoop-dependencies/" \
          io.druid.cli.Main tools pull-deps \
@@ -44,7 +44,7 @@ RUN wget -q -O - http://static.druid.io/artifacts/releases/druid-$DRUID_VERSION-
          -c io.druid.extensions.contrib:druid-cassandra-storage:$DRUID_VERSION \
          -c io.druid.extensions.contrib:druid-cloudfiles-extensions:$DRUID_VERSION \
          -c io.druid.extensions.contrib:druid-distinctcount:$DRUID_VERSION \
-#         -c io.druid.extensions.contrib:druid-kafka-eight-simpleConsumer:$DRUID_VERSION \
+         # -c io.druid.extensions.contrib:druid-kafka-eight-simpleConsumer:$DRUID_VERSION \
          -c io.druid.extensions.contrib:druid-orc-extensions:$DRUID_VERSION \
          -c io.druid.extensions.contrib:druid-parquet-extensions:$DRUID_VERSION \
          -c io.druid.extensions.contrib:druid-rabbitmq:$DRUID_VERSION \
