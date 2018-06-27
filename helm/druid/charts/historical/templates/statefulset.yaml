@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "historical.fullname" . }}
+  labels:
+    app: {{ template "historical.name" . }}
+    chart: {{ template "historical.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "historical.name" . }}
+      release: {{ .Release.Name }}
+  volumeClaimTemplates:
+  - metadata:
+      name: segment-cache
+    spec:
+      accessModes: 
+      - "ReadWriteOnce"
+      resources:
+        requests:
+#          storage: 50Gi
+          storage: {{ .Values.druid.server.maxSize }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "historical.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ .Values.druid | toYaml | sha256sum }}
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-common
+          configMap:
+            name: {{ .Release.Name }}-common
+            # Required for a temporary workaround with name resolution
+            # we insert "druid.host" in entrypoint script
+            defaultMode: 0666
+        - name: {{ template "historical.fullname" . }}
+          configMap:
+            name: {{ template "historical.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DRUID_ROLE
+              value: {{ template "historical.name" . }}
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          ports:
+            - containerPort: {{.Values.druid.port}}
+              protocol: TCP
+              name: manager
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+#          readinessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+          volumeMounts:
+            - mountPath: /opt/druid/conf-k8s/_common/
+              name: {{ .Release.Name }}-common
+            - mountPath: /opt/druid/conf-k8s/historical/
+              name: {{ template "historical.fullname" . }}
+            - mountPath: /var/druid/segment-cache
+              name: segment-cache
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

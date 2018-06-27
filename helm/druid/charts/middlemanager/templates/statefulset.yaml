@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "middlemanager.fullname" . }}
+  labels:
+    app: {{ template "middlemanager.name" . }}
+    chart: {{ template "middlemanager.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "middlemanager.name" . }}
+      release: {{ .Release.Name }}
+  volumeClaimTemplates:
+  - metadata:
+      name: tmp
+    spec:
+      accessModes: 
+      - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: 50Gi
+#          storage: .Values.config.middlemanager.druid.server.maxSize
+  template:
+    metadata:
+      labels:
+        app: {{ template "middlemanager.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ .Values.druid | toYaml | sha256sum }}
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-common
+          configMap:
+            name: {{ .Release.Name }}-common
+            # Required for a temporary workaround with name resolution
+            # we insert "druid.host" in entrypoint script
+            defaultMode: 0666
+        - name: {{ template "middlemanager.fullname" . }}
+          configMap:
+            name: {{ template "middlemanager.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DRUID_ROLE
+              value: middleManager
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          ports:
+            - containerPort: {{.Values.druid.port}}
+              protocol: TCP
+              name: manager
+            # We should add connection between ports allocated below and druid setting
+            # druid.indexer.runner.startPort
+            # yet roll them dynamically
+            - containerPort: 8100
+              protocol: TCP
+              name: peon1
+            - containerPort: 8101
+              protocol: TCP
+              name: peon2
+            - containerPort: 8102
+              protocol: TCP
+              name: peon3
+            - containerPort: 8103
+              protocol: TCP
+              name: peon4
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+#          readinessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+          volumeMounts:
+            - mountPath: /opt/druid/conf-k8s/_common/
+              name: {{ .Release.Name }}-common
+            - mountPath: /opt/druid/conf-k8s/middleManager/
+              name: {{ template "middlemanager.fullname" . }}
+            - mountPath: /opt/druid/var/tmp
+              name: tmp
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

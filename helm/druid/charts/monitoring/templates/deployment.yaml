@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "monitoring.fullname" . }}
+  labels:
+    app: {{ template "monitoring.name" . }}
+    chart: {{ template "monitoring.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "monitoring.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "monitoring.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ (tpl (.Files.Glob "files/*").AsConfig .) | sha256sum }}
+    spec:
+      volumes:
+        - name: {{ template "monitoring.name" . }}
+          configMap:
+            name: {{ template "monitoring.name" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: metrics
+              containerPort: 9102
+              protocol: TCP
+            - name: statsd-udp
+              containerPort: 9125
+              protocol: UDP
+            - name: statsd-tcp
+              containerPort: 9125
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+          volumeMounts:
+          - name: {{ template "monitoring.name" . }}
+            mountPath: /etc/statsd_mapping.conf
+            subPath: statsd_mapping.conf
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
