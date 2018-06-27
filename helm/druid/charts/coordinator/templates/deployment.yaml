@@ -19,6 +19,7 @@ spec:
         app: {{ template "coordinator.name" . }}
         release: {{ .Release.Name }}
       annotations:
+        checksum/config-common: {{ .Values.global.druid | toYaml | sha256sum }}
         checksum/config: {{ .Values.druid | toYaml | sha256sum }}
     spec:
       volumes:

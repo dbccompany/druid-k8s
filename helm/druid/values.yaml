@@ -65,71 +65,70 @@ historical:
       buffer:
         sizeBytes: "536870912"
 
-config:
-  common:
-    druid:
-      extensions:
-        loadList:
-        - "druid-kafka-eight"
-        - "druid-s3-extensions"
-        - "druid-histogram"
-        - "druid-datasketches"
-        - "druid-lookups-cached-global"
-        - "mysql-metadata-storage"
-      startup:
-        logging:
-          logProperties: "true"
-      # Zookeeper
-      zk:
-        service:
-          host: zk.host.ip
-        paths:
-          base: /druid
-      # Metadata storage
-      metadata:
-        storage:
-          type: derby
-          connector:
-            connectURI: "jdbc:derby://metadata.store.ip:1527/var/druid/metadata.db;create=true"
-            host: metadata.store.ip
-            port: 1527
-      # Deep storage
+global:
+  druid:
+    extensions:
+      loadList:
+      - "druid-kafka-eight"
+      - "druid-s3-extensions"
+      - "druid-histogram"
+      - "druid-datasketches"
+      - "druid-lookups-cached-global"
+      - "mysql-metadata-storage"
+    startup:
+      logging:
+        logProperties: "true"
+    # Zookeeper
+    zk:
+      service:
+        host: zk.host.ip
+      paths:
+        base: /druid
+    # Metadata storage
+    metadata:
       storage:
-        type: local
-        storageDirectory: var/druid/segments
-        # For S3 type
-        bucket: your-bucket
-        baseKey: druid/segments
-      # AWS keys
-      s3:
-        accessKey: AAA
-        secretKey: AAA
-      # Indexing service logs
-      indexer:
-        logs:
-          type: file
-          directory: var/druid/indexing-logs
-          # For S3
-          #s3Bucket: your-bucket
-          #s3Prefix: druid/indexing-logs
-      # Service discovery
-      selectors:
-        indexing:
-          serviceName: druid/overlord
-        coordinator:
-          serviceName: druid/coordinator
-      # Monitoring
-      monitoring:
-        monitors:
-        - "io.druid.java.util.metrics.JvmMonitor"
-      emitter:
-        composing:
-          emitters:
-          - "logging"
-        logging:
-          logLevel: info
-      # Storage type of double columns
+        type: derby
+        connector:
+          connectURI: "jdbc:derby://metadata.store.ip:1527/var/druid/metadata.db;create=true"
+          host: metadata.store.ip
+          port: 1527
+    # Deep storage
+    storage:
+      type: local
+      storageDirectory: var/druid/segments
+      # For S3 type
+      bucket: your-bucket
+      baseKey: druid/segments
+    # AWS keys
+    s3:
+      accessKey: AAA
+      secretKey: AAA
+    # Indexing service logs
+    indexer:
+      logs:
+        type: file
+        directory: var/druid/indexing-logs
+        # For S3
+        #s3Bucket: your-bucket
+        #s3Prefix: druid/indexing-logs
+    # Service discovery
+    selectors:
       indexing:
-        doubleStorage: double
-      javascript:
-        enabled: false
+        serviceName: druid/overlord
+      coordinator:
+        serviceName: druid/coordinator
+    # Monitoring
+    monitoring:
+      monitors:
+      - "io.druid.java.util.metrics.JvmMonitor"
+    emitter:
+      composing:
+        emitters:
+        - "logging"
+      logging:
+        logLevel: info
+    # Storage type of double columns
+    indexing:
+      doubleStorage: double
+    javascript:
+      enabled: false
