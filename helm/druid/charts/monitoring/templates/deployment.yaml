@@ -22,9 +22,9 @@ spec:
         checksum/config: {{ (tpl (.Files.Glob "files/*").AsConfig .) | sha256sum }}
     spec:
       volumes:
-        - name: {{ template "monitoring.name" . }}
+        - name: {{ template "monitoring.fullname" . }}
           configMap:
-            name: {{ template "monitoring.name" . }}
+            name: {{ template "monitoring.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -48,7 +48,7 @@ spec:
               path: /metrics
               port: metrics
           volumeMounts:
-          - name: {{ template "monitoring.name" . }}
+          - name: {{ template "monitoring.fullname" . }}
             mountPath: /etc/statsd_mapping.conf
             subPath: statsd_mapping.conf
           resources:

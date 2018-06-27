@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "monitoring.name" . }}
+  name: {{ template "monitoring.fullname" . }}
   labels:
     app: {{ template "monitoring.name" . }}
     chart: {{ template "monitoring.chart" . }}
