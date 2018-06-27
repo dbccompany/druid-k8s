@@ -131,3 +131,5 @@ config:
       # Storage type of double columns
       indexing:
         doubleStorage: double
+      javascript:
+        enabled: false
