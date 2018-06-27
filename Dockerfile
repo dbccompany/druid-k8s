@@ -1,28 +1,15 @@
-FROM ubuntu:16.04
+FROM anapsix/alpine-java
 
 #### Settings ####
 ARG DRUID_VERSION=0.12.1
+ARG TRANQUILITY_VERSION=0.8.2
 ENV DRUID_HOME /opt/druid
 ENV DRUID_MAVEN_REPO https://metamx.artifactoryonline.com/metamx/libs-releases
 ENV PROMETHEUS_JAVAAGENT_VERSION=0.9
 
-######### Oracle Java magic BEGIN #########
-ENV DEBIAN_FRONTEND=noninteractive
-RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" > /etc/apt/sources.list.d/webupd8team-java.list
-RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \
- && apt-get update \
- && apt-get install -y oracle-java8-installer \
- && rm -rf /var/cache/oracle-jdk8-installer \
- && apt-get autoremove -y \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
- && rm -rf /var/cache/debconf
-
-ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
-########## Oracle Java magic END ##########
-
+# Prerequisites
+RUN apk add --update coreutils wget \
+        && rm -f /var/cache/apk/*
 
 ###### Druid install BEGIN ######
 
