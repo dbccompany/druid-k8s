@@ -29,6 +29,8 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/statsd_exporter"]
+          args: ["-statsd.mapping-config=/etc/statsd_mapping.conf"]
           ports:
             - name: metrics
               containerPort: 9102
