@@ -56,7 +56,7 @@ spec:
           ports:
             - containerPort: {{.Values.druid.port}}
               protocol: TCP
-              name: manager
+              name: http
             # We should add connection between ports allocated below and druid setting
             # druid.indexer.runner.startPort
             # yet roll them dynamically
@@ -72,14 +72,14 @@ spec:
             - containerPort: 8103
               protocol: TCP
               name: peon4
-#          livenessProbe:
-#            httpGet:
-#              path: /
-#              port: http
-#          readinessProbe:
-#            httpGet:
-#              path: /
-#              port: http
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: http
           volumeMounts:
             - mountPath: /opt/druid/conf-k8s/_common/
               name: {{ .Release.Name }}-common

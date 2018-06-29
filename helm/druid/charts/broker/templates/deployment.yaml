@@ -44,14 +44,18 @@ spec:
             - name: http
               containerPort: {{ .Values.druid.port }}
               protocol: TCP
-#          livenessProbe:
-#            httpGet:
-#              path: /
-#              port: http
-#          readinessProbe:
-#            httpGet:
-#              path: /
-#              port: http
+          livenessProbe:
+            exec:
+              command:
+              - "/bin/sh"
+              - "-c"
+              - "wget -qO - http://$MY_POD_IP:{{.Values.druid.port}}/druid/broker/v1/loadstatus | grep -q '{\"inventoryInitialized\":true}'"
+          readinessProbe:
+            exec:
+              command:
+              - "/bin/sh"
+              - "-c"
+              - "wget -qO - http://$MY_POD_IP:{{.Values.druid.port}}/druid/broker/v1/loadstatus | grep -q '{\"inventoryInitialized\":true}'"
           volumeMounts:
             - mountPath: /opt/druid/conf-k8s/_common/
               name: {{ .Release.Name }}-common
