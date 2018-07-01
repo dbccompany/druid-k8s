@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  annotations: {}
+  clusterName: ""
+  labels:
+    app: api
+#    app: {{ template "monitoring.name" . }}
+    chart: {{ template "monitoring.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  name: {{ template "monitoring.fullname" . }}
+  # ServiceMonitor objects MUST be in the same namespace
+  # as the "Prometheus" object. So should be configurable
+  namespace: monitoring
+spec:
+  endpoints:
+    - interval: 15s
+      port: metrics
+  jobLabel: release
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+    any: true
+  selector:
+    matchLabels:
+      app: {{ template "monitoring.name" . }}
+      release: {{ .Release.Name }}

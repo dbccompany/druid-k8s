@@ -13,7 +13,7 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: metrics
       protocol: TCP
-      name: http
+      name: metrics
     - port: 9125
       targetPort: statsd-udp
       protocol: UDP
