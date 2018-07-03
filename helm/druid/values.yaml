@@ -55,11 +55,13 @@ historical:
       http:
         numThreads: 25
       maxSize: "130000000000"
-# Hardcoded value for simplicity, 1 mountpoint is enough in container
-#    segmentCache:
-#      locations:
-#      - path: "/var/druid/segment-cache"
-#        maxSize: "30000000000"
+    # TODO: think about dynamic volume allocation to reflect
+    # configuration defined in segmentCache section
+    segmentCache:
+      locations:
+        - path: "/var/druid/segment-cache"
+          maxSize: "1300000000000"
+          freeSpacePercent: 5.0
     processing:
       numThreads: 7
       buffer:
