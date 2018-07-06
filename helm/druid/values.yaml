@@ -28,16 +28,64 @@ broker:
       buffer:
         sizeBytes: "536870912"
       numThreads: 7
+  resources:
+    limits:
+      cpu: 2
+      memory: 4Gi
+    requests:
+      cpu: 0.5
+      memory: 4Gi
 
 middlemanager:
   druid:
     service: druid/middleManager
     port: 8091
+    worker:
+      capacity: 2
+    server:
+      http:
+        numThreads: 25
+    indexer:
+      runner:
+        javaOpts: "-server -Xmx3g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"
+      task:
+        baseTaskDir: var/druid/task
+        hadoopWorkingPath: var/druid/hadoop-tmp
+        defaultHadoopCoordinates:
+          - "org.apache.hadoop:hadoop-client:2.7.3"
+      fork:
+        property:
+          druid:
+            processing:
+              numThreads: 2
+              buffer:
+                sizeBytes: 536870912
+  resources:
+    limits:
+      cpu: 2
+      memory: 7Gi
+    requests:
+      cpu: 1
+      memory: 4Gi
 
 overlord:
   druid:
     service: druid/overlord
     port: 8090
+    indexer:
+      queue:
+        startDelay: PT30S
+      runner:
+        type: remote
+      storage:
+        type: metadata
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 0.5
+      memory: 3Gi
 
 coordinator:
   druid:
@@ -46,6 +94,13 @@ coordinator:
     coordinator:
       startDelay: PT30S
       period: PT30S
+  resources:
+    limits:
+      cpu: 2
+      memory: 2Gi
+    requests:
+      cpu: 0.5
+      memory: 1Gi
 
 historical:
   druid:
@@ -66,6 +121,13 @@ historical:
       numThreads: 7
       buffer:
         sizeBytes: "536870912"
+  resources:
+    limits:
+      cpu: 2
+      memory: 9Gi
+    requests:
+      cpu: 1
+      memory: 8Gi
 
 global:
   druid:
