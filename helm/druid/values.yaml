@@ -59,14 +59,17 @@ middlemanager:
             processing:
               numThreads: 2
               buffer:
-                sizeBytes: 536870912
+                sizeBytes: "536870912"
   resources:
+    # Peons use more memory than defined in JVM settings
+    # TODO: Have to revisit and figure it out.
+    # Could be a problem with garbage collector or DirectMemory
     limits:
       cpu: 2
-      memory: 7Gi
+      memory: 10Gi
     requests:
       cpu: 1
-      memory: 4Gi
+      memory: 5Gi
 
 overlord:
   druid:
@@ -116,7 +119,8 @@ historical:
       locations:
         - path: "/var/druid/segment-cache"
           maxSize: "1300000000000"
-          freeSpacePercent: 5.0
+          # This setting doesn't work for some reason
+          # freeSpacePercent: 5.0
     processing:
       numThreads: 7
       buffer:
