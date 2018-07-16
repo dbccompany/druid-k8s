@@ -29,6 +29,7 @@ spec:
         - name: {{ template "broker.fullname" . }}
           configMap:
             name: {{ template "broker.fullname" . }}
+{{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -63,6 +64,7 @@ spec:
               name: {{ template "broker.fullname" . }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+{{ include "monitoring.containers" . | indent 8 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

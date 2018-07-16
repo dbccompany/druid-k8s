@@ -26,12 +26,10 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-            # Required for a temporary workaround with name resolution
-            # we insert "druid.host" in entrypoint script
-            defaultMode: 0666
         - name: {{ template "coordinator.fullname" . }}
           configMap:
             name: {{ template "coordinator.fullname" . }}
+{{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -62,6 +60,7 @@ spec:
               name: {{ template "coordinator.fullname" . }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+{{ include "monitoring.containers" . | indent 8 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

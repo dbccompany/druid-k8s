@@ -30,3 +30,45 @@ Create chart name and version as used by the chart label.
 {{- define "druid.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Monitoring volumes included in all Druid pods
+*/}}
+{{- define "monitoring.volumes" -}}
+- name: {{ printf "%s-%s" .Release.Name "statsd" }}
+  configMap:
+    name: {{ printf "%s-%s" .Release.Name "statsd" }}
+{{- end -}}
+
+{{/*
+Monitoring containers included in all Druid pods
+*/}}
+{{- define "monitoring.containers" -}}
+- name: statsd
+  image: "{{ .Values.global.monitoring.image.repository }}:{{ .Values.global.monitoring.image.tag }}"
+  imagePullPolicy: {{ .Values.global.monitoring.image.pullPolicy }}
+  command: ["/bin/statsd_exporter"]
+  args: ["-statsd.mapping-config=/etc/statsd_mapping.conf"]
+  ports:
+    - name: metrics
+      containerPort: 9102
+      protocol: TCP
+    - name: statsd-udp
+      containerPort: 9125
+      protocol: UDP
+    - name: statsd-tcp
+      containerPort: 9125
+      protocol: TCP
+  livenessProbe:
+    httpGet:
+      path: /metrics
+      port: metrics
+  readinessProbe:
+    httpGet:
+      path: /metrics
+      port: metrics
+  volumeMounts:
+  - name: {{ printf "%s-%s" .Release.Name "statsd" }}
+    mountPath: /etc/statsd_mapping.conf
+    subPath: statsd_mapping.conf
+{{- end -}}

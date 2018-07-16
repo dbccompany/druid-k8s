@@ -200,3 +200,10 @@ global:
       doubleStorage: double
     javascript:
       enabled: false
+
+  monitoring:
+    enabled: false
+    image:
+      repository: prom/statsd-exporter
+      tag: v0.6.0
+      pullPolicy: IfNotPresent
