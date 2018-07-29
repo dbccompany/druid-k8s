@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ template "broker.fullname" . }}
   labels:
@@ -13,6 +13,7 @@ spec:
     matchLabels:
       app: {{ template "broker.name" . }}
       release: {{ .Release.Name }}
+  serviceName: {{ template "broker.fullname" . }}-headless
   template:
     metadata:
       labels:
@@ -37,10 +38,10 @@ spec:
           env:
             - name: DRUID_ROLE
               value: {{ template "broker.name" . }}
-            - name: MY_POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
+              #            - name: MY_POD_IP
+              #              valueFrom:
+              #                fieldRef:
+              #                  fieldPath: status.podIP
           ports:
             - name: http
               containerPort: {{ .Values.druid.port }}
@@ -50,17 +51,17 @@ spec:
               command:
               - "/bin/sh"
               - "-c"
-              - "wget -qO - http://$MY_POD_IP:{{.Values.druid.port}}/druid/broker/v1/loadstatus | grep -q '{\"inventoryInitialized\":true}'"
+              - "wget -qO - http://localhost:{{.Values.druid.port}}/druid/broker/v1/loadstatus | grep -q '{\"inventoryInitialized\":true}'"
           readinessProbe:
             exec:
               command:
               - "/bin/sh"
               - "-c"
-              - "wget -qO - http://$MY_POD_IP:{{.Values.druid.port}}/druid/broker/v1/loadstatus | grep -q '{\"inventoryInitialized\":true}'"
+              - "wget -qO - http://localhost:{{.Values.druid.port}}/druid/broker/v1/loadstatus | grep -q '{\"inventoryInitialized\":true}'"
           volumeMounts:
-            - mountPath: /opt/druid/conf-k8s/_common/
+            - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-            - mountPath: /opt/druid/conf-k8s/broker/
+            - mountPath: /opt/druid/conf/broker/
               name: {{ template "broker.fullname" . }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}

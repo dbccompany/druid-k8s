@@ -13,6 +13,7 @@ spec:
     matchLabels:
       app: {{ template "historical.name" . }}
       release: {{ .Release.Name }}
+  serviceName: {{ template "historical.fullname" . }}-headless
   volumeClaimTemplates:
   - metadata:
       name: segment-cache
@@ -47,10 +48,10 @@ spec:
           env:
             - name: DRUID_ROLE
               value: {{ template "historical.name" . }}
-            - name: MY_POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
+              #            - name: MY_POD_IP
+              #              valueFrom:
+              #                fieldRef:
+              #                  fieldPath: status.podIP
           ports:
             - containerPort: {{.Values.druid.port}}
               protocol: TCP
@@ -68,9 +69,9 @@ spec:
             initialDelaySeconds: 300
             periodSeconds: 15
           volumeMounts:
-            - mountPath: /opt/druid/conf-k8s/_common/
+            - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-            - mountPath: /opt/druid/conf-k8s/historical/
+            - mountPath: /opt/druid/conf/historical/
               name: {{ template "historical.fullname" . }}
             - mountPath: /var/druid/segment-cache
               name: segment-cache

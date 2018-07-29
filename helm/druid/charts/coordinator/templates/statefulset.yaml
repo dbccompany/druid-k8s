@@ -1,22 +1,23 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ template "overlord.fullname" . }}
+  name: {{ template "coordinator.fullname" . }}
   labels:
-    app: {{ template "overlord.name" . }}
-    chart: {{ template "overlord.chart" . }}
+    app: {{ template "coordinator.name" . }}
+    chart: {{ template "coordinator.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "overlord.name" . }}
+      app: {{ template "coordinator.name" . }}
       release: {{ .Release.Name }}
+  serviceName: {{ template "coordinator.fullname" . }}-headless
   template:
     metadata:
       labels:
-        app: {{ template "overlord.name" . }}
+        app: {{ template "coordinator.name" . }}
         release: {{ .Release.Name }}
       annotations:
         checksum/config-common: {{ .Values.global.druid | toYaml | sha256sum }}
@@ -26,9 +27,9 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-        - name: {{ template "overlord.fullname" . }}
+        - name: {{ template "coordinator.fullname" . }}
           configMap:
-            name: {{ template "overlord.fullname" . }}
+            name: {{ template "coordinator.fullname" . }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: {{ .Chart.Name }}
@@ -36,11 +37,11 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: DRUID_ROLE
-              value: {{ template "overlord.name" . }}
-            - name: MY_POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
+              value: {{ template "coordinator.name" . }}
+              #            - name: MY_POD_IP
+              #              valueFrom:
+              #                fieldRef:
+              #                  fieldPath: status.podIP
           ports:
             - name: http
               containerPort: {{ .Values.druid.port }}
@@ -54,10 +55,10 @@ spec:
               path: /status
               port: http
           volumeMounts:
-            - mountPath: /opt/druid/conf-k8s/_common/
+            - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-            - mountPath: /opt/druid/conf-k8s/overlord/
-              name: {{ template "overlord.fullname" . }}
+            - mountPath: /opt/druid/conf/coordinator/
+              name: {{ template "coordinator.fullname" . }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{ include "monitoring.containers" . | indent 8 }}

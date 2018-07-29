@@ -13,6 +13,7 @@ spec:
     matchLabels:
       app: {{ template "middlemanager.name" . }}
       release: {{ .Release.Name }}
+  serviceName: {{ template "middlemanager.name" . }}-headless
   volumeClaimTemplates:
   - metadata:
       name: tmp
@@ -47,10 +48,10 @@ spec:
           env:
             - name: DRUID_ROLE
               value: middleManager
-            - name: MY_POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
+              #            - name: MY_POD_IP
+              #              valueFrom:
+              #                fieldRef:
+              #                  fieldPath: status.podIP
           ports:
             - containerPort: {{.Values.druid.port}}
               protocol: TCP
@@ -79,9 +80,9 @@ spec:
               path: /status
               port: http
           volumeMounts:
-            - mountPath: /opt/druid/conf-k8s/_common/
+            - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-            - mountPath: /opt/druid/conf-k8s/middleManager/
+            - mountPath: /opt/druid/conf/middleManager/
               name: {{ template "middlemanager.fullname" . }}
             - mountPath: /opt/druid/var/tmp
               name: tmp
