@@ -46,7 +46,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1531932152934,
+  "iteration": 1532885150633,
   "links": [],
   "panels": [
     {
@@ -1047,11 +1047,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(query_time_groupBy_sum{druid_env=\"$druid_env\", druid_role=\"broker\"} / query_time_groupBy_count{druid_env=\"$druid_env\", druid_role=\"broker\"}) by (druid_hostPort)",
+          "expr": "sum(query_time_groupBy_sum{druid_env=\"$druid_env\", druid_role=\"broker\"} / query_time_groupBy_count{druid_env=\"$druid_env\", druid_role=\"broker\"}) by (pod)",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{druid_hostPort}}",
+          "legendFormat": "{{pod}}",
           "refId": "B",
           "step": 60
         }
@@ -1430,11 +1430,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(query_cpu_time_groupBy_sum{druid_env=\"$druid_env\", druid_role=\"historical\"} / query_cpu_time_groupBy_count{druid_env=\"$druid_env\", druid_role=\"historical\"}) by (druid_hostPort)",
+          "expr": "sum(query_cpu_time_groupBy_sum{druid_env=\"$druid_env\", druid_role=\"historical\"} / query_cpu_time_groupBy_count{druid_env=\"$druid_env\", druid_role=\"historical\"}) by (pod)",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{druid_hostPort}}",
+          "legendFormat": "{{pod}}",
           "refId": "B",
           "step": 60
         }
@@ -1613,7 +1613,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{druid_hostPort}}",
+          "legendFormat": "{{pod}}",
           "refId": "B",
           "step": 60
         }
@@ -1702,7 +1702,7 @@
           "expr": "query_segment_time_sum{druid_env=\"$druid_env\", druid_role=\"historical\"} / query_segment_time_count{druid_env=\"$druid_env\", druid_role=\"historical\"}",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "{{druid_hostPort}}",
+          "legendFormat": "{{pod}}",
           "refId": "B",
           "step": 60
         }
@@ -1792,7 +1792,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{druid_hostPort}}",
+          "legendFormat": "{{pod}}",
           "refId": "B",
           "step": 60
         }
@@ -2090,7 +2090,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "dev-druid New",
+  "title": "Druid",
   "uid": "9Vw83OOik",
   "version": 5
 }
