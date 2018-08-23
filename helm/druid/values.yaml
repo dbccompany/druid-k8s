@@ -70,6 +70,13 @@ middlemanager:
     requests:
       cpu: 1
       memory: 5Gi
+  persistence:
+    enabled: false
+    # storageClassName: default
+    # accessModes:
+    #   - ReadWriteOnce
+    # size: 10Gi
+    # annotations: {}
 
 overlord:
   druid:
@@ -132,6 +139,13 @@ historical:
     requests:
       cpu: 1
       memory: 8Gi
+  persistence:
+    enabled: false
+    # storageClassName: default
+    # accessModes:
+    #   - ReadWriteOnce
+    # size: 10Gi
+    # annotations: {}
 
 global:
   druid:

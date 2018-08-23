@@ -14,16 +14,28 @@ spec:
       app: {{ template "middlemanager.name" . }}
       release: {{ .Release.Name }}
   serviceName: {{ template "middlemanager.name" . }}-headless
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  updateStrategy:
+{{ toYaml .Values.updateStrategy | indent 4 }}
+{{- if and .Values.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: tmp
+    {{- with .Values.persistence.annotations  }}
+      annotations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
     spec:
       accessModes: 
-      - "ReadWriteOnce"
+        {{- range .Values.persistence.accessModes }}
+        - {{ . | quote }}
+        {{- end }}
       resources:
         requests:
-          storage: 50Gi
-#          storage: .Values.config.middlemanager.druid.server.maxSize
+          storage: {{ .Values.persistence.size | quote }}
+      storageClassName: {{ .Values.persistence.storageClassName }}
+{{- end }}
+
   template:
     metadata:
       labels:
@@ -40,6 +52,10 @@ spec:
         - name: {{ template "middlemanager.fullname" . }}
           configMap:
             name: {{ template "middlemanager.fullname" . }}
+      {{- if not .Values.persistence.enabled }}
+        - name: tmp
+          emptyDir: {}
+      {{- end }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: {{ .Chart.Name }}

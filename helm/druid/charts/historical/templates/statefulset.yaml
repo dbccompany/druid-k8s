@@ -14,16 +14,27 @@ spec:
       app: {{ template "historical.name" . }}
       release: {{ .Release.Name }}
   serviceName: {{ template "historical.fullname" . }}-headless
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  updateStrategy:
+{{ toYaml .Values.updateStrategy | indent 4 }}
+{{- if and .Values.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: segment-cache
+    {{- with .Values.persistence.annotations  }}
+      annotations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
     spec:
       accessModes: 
-      - "ReadWriteOnce"
+        {{- range .Values.persistence.accessModes }}
+        - {{ . | quote }}
+        {{- end }}
       resources:
         requests:
-#          storage: 50Gi
-          storage: {{ .Values.druid.server.maxSize }}
+          storage: {{ .Values.persistence.size | quote }}
+      storageClassName: {{ .Values.persistence.storageClassName }}
+{{- end }}
   template:
     metadata:
       labels:
@@ -40,6 +51,10 @@ spec:
         - name: {{ template "historical.fullname" . }}
           configMap:
             name: {{ template "historical.fullname" . }}
+      {{- if not .Values.persistence.enabled }}
+        - name: segment-cache
+          emptyDir: {}
+      {{- end }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: {{ .Chart.Name }}
