@@ -13,7 +13,7 @@ spec:
     matchLabels:
       app: {{ template "middlemanager.name" . }}
       release: {{ .Release.Name }}
-  serviceName: {{ template "middlemanager.name" . }}-headless
+  serviceName: {{ template "middlemanager.fullname" . }}-headless
   podManagementPolicy: {{ .Values.podManagementPolicy }}
   updateStrategy:
 {{ toYaml .Values.updateStrategy | indent 4 }}
@@ -58,7 +58,7 @@ spec:
       {{- end }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: druid # {{ .Chart.Name }} - universal container name for druid is better
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:

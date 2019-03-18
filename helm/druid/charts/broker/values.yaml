@@ -6,10 +6,10 @@ replicaCount: 1
 
 image:
   repository: dene14/druid
-  tag: 0.12.1-1
+  tag: 0.13.0-1
   pullPolicy: IfNotPresent
 
-## The StatefulSet Update Strategy which Kafka will use when changes are applied.
+## The StatefulSet Update Strategy which Druid will use when changes are applied.
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
 updateStrategy:
   type: "RollingUpdate"

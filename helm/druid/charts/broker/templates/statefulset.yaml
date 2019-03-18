@@ -35,7 +35,7 @@ spec:
             name: {{ template "broker.fullname" . }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: druid # {{ .Chart.Name }} - universal container name for druid is better
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:

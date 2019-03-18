@@ -93,5 +93,5 @@ rm -rf /tmp
 ln -s /mnt/tmp /tmp
 
 cat $DRUID_ROOT/conf/_common/common.runtime.properties
-echo "Launcing process: java $JAVA_PROPERTIES -javaagent:$DRUID_ROOT/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar=1234:$DRUID_ROOT/conf/prometheus_javaagent.yaml -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* io.druid.cli.Main server $NODE_TYPE"
-java $JAVA_PROPERTIES -javaagent:$DRUID_ROOT/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar=1234:$DRUID_ROOT/conf/prometheus_javaagent.yaml -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* io.druid.cli.Main server $NODE_TYPE
+echo "Launcing process: java $JAVA_PROPERTIES -javaagent:$DRUID_ROOT/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar=1234:$DRUID_ROOT/conf/prometheus_javaagent.yaml -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* org.apache.druid.cli.Main server $NODE_TYPE"
+java $JAVA_PROPERTIES -javaagent:$DRUID_ROOT/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar=1234:$DRUID_ROOT/conf/prometheus_javaagent.yaml -cp $DRUID_ROOT/conf/_common:$DRUID_ROOT/conf/$NODE_TYPE:$DRUID_ROOT/lib/* org.apache.druid.cli.Main server $NODE_TYPE

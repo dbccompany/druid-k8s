@@ -217,6 +217,7 @@ global:
 
   monitoring:
     enabled: false
+    name: debug
     image:
       repository: prom/statsd-exporter
       tag: v0.6.0

@@ -44,6 +44,7 @@ Monitoring volumes included in all Druid pods
 Monitoring containers included in all Druid pods
 */}}
 {{- define "monitoring.containers" -}}
+{{- if .Values.global.monitoring.enabled }}
 - name: statsd
   image: "{{ .Values.global.monitoring.image.repository }}:{{ .Values.global.monitoring.image.tag }}"
   imagePullPolicy: {{ .Values.global.monitoring.image.pullPolicy }}
@@ -71,4 +72,5 @@ Monitoring containers included in all Druid pods
   - name: {{ printf "%s-%s" .Release.Name "statsd" }}
     mountPath: /etc/statsd_mapping.conf
     subPath: statsd_mapping.conf
+{{- end -}}
 {{- end -}}
