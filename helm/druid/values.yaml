@@ -214,6 +214,8 @@ global:
       doubleStorage: double
     javascript:
       enabled: false
+    sql:
+      enable: false
 
   monitoring:
     enabled: false
