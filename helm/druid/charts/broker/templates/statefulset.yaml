@@ -22,9 +22,15 @@ spec:
       labels:
         app: {{ template "broker.name" . }}
         release: {{ .Release.Name }}
+      {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+      {{- end }}
       annotations:
         checksum/config-common: {{ .Values.global.druid | toYaml | sha256sum }}
         checksum/config: {{ .Values.druid | toYaml | sha256sum }}
+      {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+      {{- end }}
     spec:
       volumes:
         - name: {{ .Release.Name }}-common
@@ -41,6 +47,10 @@ spec:
           env:
             - name: DRUID_ROLE
               value: {{ template "broker.name" . }}
+          {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
               #            - name: MY_POD_IP
               #              valueFrom:
               #                fieldRef:
