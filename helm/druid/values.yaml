@@ -28,6 +28,8 @@ broker:
       buffer:
         sizeBytes: "536870912"
       numThreads: 7
+    lookup:
+      lookupTier: __default
   resources:
     limits:
       cpu: 2
@@ -60,6 +62,8 @@ middlemanager:
               numThreads: 2
               buffer:
                 sizeBytes: "536870912"
+    lookup:
+      lookupTier: __default
   resources:
     # Peons use more memory than defined in JVM settings
     # TODO: Have to revisit and figure it out.
@@ -89,6 +93,8 @@ overlord:
         type: remote
       storage:
         type: metadata
+    lookup:
+      lookupTier: __default
   resources:
     limits:
       cpu: 1
@@ -104,6 +110,8 @@ coordinator:
     coordinator:
       startDelay: PT30S
       period: PT30S
+    lookup:
+      lookupTier: __default
   resources:
     limits:
       cpu: 2
@@ -132,6 +140,8 @@ historical:
       numThreads: 7
       buffer:
         sizeBytes: "536870912"
+    lookup:
+      lookupTier: __default
   resources:
     limits:
       cpu: 2
@@ -182,9 +192,9 @@ global:
       bucket: your-bucket
       baseKey: druid/segments
     # AWS keys
-    s3:
-      accessKey: AAA
-      secretKey: AAA
+    #s3:
+    #  accessKey: AAA
+    #  secretKey: AAA
     # Indexing service logs
     indexer:
       logs:
