@@ -1,7 +1,7 @@
 FROM anapsix/alpine-java
 
 #### Settings ####
-ARG DRUID_VERSION=0.13.0-incubating
+ARG DRUID_VERSION=0.14.1-incubating
 ENV DRUID_HOME /opt/druid
 ENV DRUID_MAVEN_REPO https://metamx.artifactoryonline.com/metamx/libs-releases
 ENV PROMETHEUS_JAVAAGENT_VERSION=0.11.0
@@ -33,7 +33,6 @@ RUN java -cp "$DRUID_HOME/lib/*" \
          -c org.apache.druid.extensions.contrib:druid-kafka-eight-simple-consumer:$DRUID_VERSION \
          -c org.apache.druid.extensions.contrib:druid-opentsdb-emitter:$DRUID_VERSION \
          -c org.apache.druid.extensions.contrib:druid-orc-extensions:$DRUID_VERSION \
-         -c org.apache.druid.extensions.contrib:druid-parquet-extensions:$DRUID_VERSION \
          -c org.apache.druid.extensions.contrib:druid-rabbitmq:$DRUID_VERSION \
          -c org.apache.druid.extensions.contrib:druid-redis-cache:$DRUID_VERSION \
          -c org.apache.druid.extensions.contrib:druid-rocketmq:$DRUID_VERSION \
