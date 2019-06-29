@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: dene14/druid
-  tag: 0.14.1-1
+  tag: 0.14.2-3
   pullPolicy: IfNotPresent
 
 ## The StatefulSet Update Strategy which Druid will use when changes are applied.

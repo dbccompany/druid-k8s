@@ -108,10 +108,21 @@ coordinator:
     service: druid/coordinator
     port: 8081
     coordinator:
-      startDelay: PT30S
-      period: PT30S
+      startDelay: PT300S
+      period: PT60S
+      loadqueuepeon:
+        type: curator
+      merge:
+        on: false
+      kill:
+        on: false
+        maxSegments: 0
+        durationToRetain: PT-1S
+    serverview:
+      type: batch
     lookup:
       lookupTier: __default
+
   resources:
     limits:
       cpu: 2
@@ -232,5 +243,5 @@ global:
     name: debug
     image:
       repository: prom/statsd-exporter
-      tag: v0.6.0
+      tag: v0.9.0
       pullPolicy: IfNotPresent

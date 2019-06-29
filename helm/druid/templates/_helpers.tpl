@@ -49,7 +49,7 @@ Monitoring containers included in all Druid pods
   image: "{{ .Values.global.monitoring.image.repository }}:{{ .Values.global.monitoring.image.tag }}"
   imagePullPolicy: {{ .Values.global.monitoring.image.pullPolicy }}
   command: ["/bin/statsd_exporter"]
-  args: ["-statsd.mapping-config=/etc/statsd_mapping.conf"]
+  args: ["--statsd.mapping-config=/etc/statsd_mapping.conf"]
   ports:
     - name: metrics
       containerPort: 9102
