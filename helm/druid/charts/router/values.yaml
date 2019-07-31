@@ -1,4 +1,4 @@
-# Default values for historical.
+# Default values for broker.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -9,7 +9,7 @@ image:
   tag: 0.15.0-1
   pullPolicy: IfNotPresent
 
-## The StatefulSet Update Strategy which Kafka will use when changes are applied.
+## The StatefulSet Update Strategy which Druid will use when changes are applied.
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
 updateStrategy:
   type: "RollingUpdate"
@@ -19,28 +19,18 @@ updateStrategy:
 podManagementPolicy: OrderedReady
 
 druid:
-  service: druid/historical
-  port: 8083
-  server:
+  service: druid/router
+  port: 8888
+  router:
+    defaultBrokerServiceName: druid/broker
+    coordinatorServiceName: druid/coordinator
+    managementProxy:
+      enabled: true
     http:
-      numThreads: 25
-    maxSize: "130000000000"
-  segmentCache:
-    locations:
-    - path: "var/druid/segment-cache"
-      maxSize: "130000000000"
-  processing:
-    numThreads: 7
-    buffer:
-      sizeBytes: "536870912"
-
-persistence:
-  enabled: false
-  # storageClassName: default
-  # accessModes:
-  #   - ReadWriteOnce
-  # size: 10Gi
-  # annotations: {}
+      numConnections: 50
+      readTimeout: PT5M
+      numMaxThreads: 100
+      numThreads: 100
 
 service:
   type: ClusterIP

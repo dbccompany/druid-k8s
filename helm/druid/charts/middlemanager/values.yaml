@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: dene14/druid
-  tag: 0.14.2-3
+  tag: 0.15.0-1
   pullPolicy: IfNotPresent
 
 ## The StatefulSet Update Strategy which Kafka will use when changes are applied.
