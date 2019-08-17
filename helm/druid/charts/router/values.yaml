@@ -30,6 +30,8 @@ druid:
       numConnections: 50
       readTimeout: PT5M
       numMaxThreads: 100
+  server:
+    http:
       numThreads: 100
 
 service:

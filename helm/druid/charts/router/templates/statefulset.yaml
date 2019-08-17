@@ -60,17 +60,13 @@ spec:
               containerPort: {{ .Values.druid.port }}
               protocol: TCP
           livenessProbe:
-            exec:
-              command:
-              - "/bin/sh"
-              - "-c"
-              - "wget -qO - http://localhost:{{.Values.druid.port}}/druid/router/v1/loadstatus | grep -q '{\"inventoryInitialized\":true}'"
+            httpGet:
+              path: /status
+              port: http
           readinessProbe:
-            exec:
-              command:
-              - "/bin/sh"
-              - "-c"
-              - "wget -qO - http://localhost:{{.Values.druid.port}}/druid/router/v1/loadstatus | grep -q '{\"inventoryInitialized\":true}'"
+            httpGet:
+              path: /status
+              port: http
           volumeMounts:
             - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common

@@ -1,7 +1,7 @@
 FROM anapsix/alpine-java
 
 #### Settings ####
-ARG DRUID_VERSION=0.15.0-incubating
+ARG DRUID_VERSION=0.15.1-incubating
 ENV DRUID_HOME /opt/druid
 ENV DRUID_MAVEN_REPO https://metamx.artifactoryonline.com/metamx/libs-releases
 ENV PROMETHEUS_JAVAAGENT_VERSION=0.11.0
