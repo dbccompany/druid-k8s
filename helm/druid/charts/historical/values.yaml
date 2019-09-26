@@ -30,6 +30,7 @@ druid:
     - path: "var/druid/segment-cache"
       maxSize: "130000000000"
   processing:
+    numMergeBuffers: 2
     numThreads: 7
     buffer:
       sizeBytes: "536870912"

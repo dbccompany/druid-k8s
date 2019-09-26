@@ -13,21 +13,23 @@ broker:
     port: 8082
     broker:
       http:
-        numConnections: 5
+        numConnections: 50
+        maxQueuedBytes: "10000000"
       cache:
-        useCache: true
-        populateCache: true
+        useCache: false
+        populateCache: false
     server:
       http:
-        numThreads: 25
+        numThreads: 60
     cache:
-      type: local
-      sizeInBytes: "2000000000"
+      type: caffeine
+      sizeInBytes: "536870912"
     # Processing threads and buffers
     processing:
       buffer:
         sizeBytes: "536870912"
-      numThreads: 7
+      numThreads: 1
+      numMergeBuffers: 6
     lookup:
       lookupTier: __default
   resources:
@@ -137,7 +139,7 @@ historical:
     port: 8083
     server:
       http:
-        numThreads: 25
+        numThreads: 60
       maxSize: "130000000000"
     # TODO: think about dynamic volume allocation to reflect
     # configuration defined in segmentCache section
@@ -147,7 +149,15 @@ historical:
           maxSize: "1300000000000"
           # This setting doesn't work for some reason
           # freeSpacePercent: 5.0
+    historical:
+      cache:
+        useCache: false
+        populateCache: false
+    cache:
+      type: caffeine
+      sizeInBytes: "536870912"
     processing:
+      numMergeBuffers: 2
       numThreads: 7
       buffer:
         sizeBytes: "536870912"
