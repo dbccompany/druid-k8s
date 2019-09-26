@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "overlord.fullname" . }}
+  labels:
+    app: {{ template "overlord.name" . }}
+    chart: {{ template "overlord.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "overlord.name" . }}
+      release: {{ .Release.Name }}
+  serviceName: {{ template "overlord.fullname" . }}-headless
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  updateStrategy:
+{{ toYaml .Values.updateStrategy | indent 4 }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "overlord.name" . }}
+        release: {{ .Release.Name }}
+      {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+      {{- end }}
+      annotations:
+        checksum/config-common: {{ .Values.global.druid | toYaml | sha256sum }}
+        checksum/config: {{ .Values.druid | toYaml | sha256sum }}
+      {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+      {{- end }}
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-common
+          configMap:
+            name: {{ .Release.Name }}-common
+        - name: {{ template "overlord.fullname" . }}
+          configMap:
+            name: {{ template "overlord.fullname" . }}
+{{ include "monitoring.volumes" . | indent 8 }}
+      containers:
+        - name: druid # {{ .Chart.Name }} - universal container name for druid is better
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DRUID_ROLE
+              value: {{ template "overlord.name" . }}
+          {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
+              #            - name: MY_POD_IP
+              #              valueFrom:
+              #                fieldRef:
+              #                  fieldPath: status.podIP
+          ports:
+            - name: http
+              containerPort: {{ .Values.druid.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: http
+          volumeMounts:
+            - mountPath: /opt/druid/conf/_common/
+              name: {{ .Release.Name }}-common
+            - mountPath: /opt/druid/conf/overlord/
+              name: {{ template "overlord.fullname" . }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+{{ include "monitoring.containers" . | indent 8 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

@@ -1,0 +1,257 @@
+# Default values for druid.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+monitoring:
+  enabled: false
+
+broker:
+  druid:
+    service: druid/broker
+    port: 8082
+    broker:
+      http:
+        numConnections: 50
+        maxQueuedBytes: "10000000"
+      cache:
+        useCache: false
+        populateCache: false
+    server:
+      http:
+        numThreads: 60
+    cache:
+      type: caffeine
+      sizeInBytes: "536870912"
+    # Processing threads and buffers
+    processing:
+      buffer:
+        sizeBytes: "536870912"
+      numThreads: 1
+      numMergeBuffers: 6
+    lookup:
+      lookupTier: __default
+  resources:
+    limits:
+      cpu: 2
+      memory: 9Gi
+    requests:
+      cpu: 0.5
+      memory: 8Gi
+
+middlemanager:
+  druid:
+    service: druid/middleManager
+    port: 8091
+    worker:
+      capacity: 2
+    server:
+      http:
+        numThreads: 25
+    indexer:
+      runner:
+        javaOpts: "-server -Xmx3g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"
+      task:
+        baseTaskDir: var/druid/task
+        hadoopWorkingPath: var/druid/hadoop-tmp
+        defaultHadoopCoordinates:
+          - "org.apache.hadoop:hadoop-client:2.7.3"
+      fork:
+        property:
+          druid:
+            processing:
+              numThreads: 2
+              buffer:
+                sizeBytes: "536870912"
+    lookup:
+      lookupTier: __default
+  resources:
+    # Peons use more memory than defined in JVM settings
+    # TODO: Have to revisit and figure it out.
+    # Could be a problem with garbage collector or DirectMemory
+    limits:
+      cpu: 2
+      memory: 10Gi
+    requests:
+      cpu: 1
+      memory: 5Gi
+  persistence:
+    enabled: false
+    # storageClassName: default
+    # accessModes:
+    #   - ReadWriteOnce
+    # size: 10Gi
+    # annotations: {}
+
+overlord:
+  druid:
+    service: druid/overlord
+    port: 8090
+    indexer:
+      queue:
+        startDelay: PT30S
+      runner:
+        type: remote
+      storage:
+        type: metadata
+    lookup:
+      lookupTier: __default
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 0.5
+      memory: 3Gi
+
+coordinator:
+  druid:
+    service: druid/coordinator
+    port: 8081
+    coordinator:
+      startDelay: PT300S
+      period: PT60S
+      loadqueuepeon:
+        type: curator
+      merge:
+        on: false
+      kill:
+        on: false
+        maxSegments: 0
+        durationToRetain: PT-1S
+    serverview:
+      type: batch
+    lookup:
+      lookupTier: __default
+
+  resources:
+    limits:
+      cpu: 2
+      memory: 2Gi
+    requests:
+      cpu: 0.5
+      memory: 1Gi
+
+historical:
+  druid:
+    service: druid/historical
+    port: 8083
+    server:
+      http:
+        numThreads: 60
+      maxSize: "130000000000"
+    # TODO: think about dynamic volume allocation to reflect
+    # configuration defined in segmentCache section
+    segmentCache:
+      locations:
+        - path: "/var/druid/segment-cache"
+          maxSize: "1300000000000"
+          # This setting doesn't work for some reason
+          # freeSpacePercent: 5.0
+    historical:
+      cache:
+        useCache: false
+        populateCache: false
+    cache:
+      type: caffeine
+      sizeInBytes: "536870912"
+    processing:
+      numMergeBuffers: 2
+      numThreads: 7
+      buffer:
+        sizeBytes: "536870912"
+    lookup:
+      lookupTier: __default
+  resources:
+    limits:
+      cpu: 2
+      memory: 9Gi
+    requests:
+      cpu: 1
+      memory: 8Gi
+  persistence:
+    enabled: false
+    # storageClassName: default
+    # accessModes:
+    #   - ReadWriteOnce
+    # size: 10Gi
+    # annotations: {}
+
+global:
+  druid:
+    extensions:
+      loadList:
+      - "druid-kafka-eight"
+      - "druid-s3-extensions"
+      - "druid-histogram"
+      - "druid-datasketches"
+      - "druid-lookups-cached-global"
+      - "mysql-metadata-storage"
+    startup:
+      logging:
+        logProperties: "true"
+    # Zookeeper
+    zk:
+      service:
+        host: zk.host.ip
+      paths:
+        base: /druid
+    # Metadata storage
+    metadata:
+      storage:
+        type: derby
+        connector:
+          connectURI: "jdbc:derby://metadata.store.ip:1527/var/druid/metadata.db;create=true"
+          host: metadata.store.ip
+          port: 1527
+    # Deep storage
+    storage:
+      type: local
+      storageDirectory: var/druid/segments
+      # For S3 type
+      bucket: your-bucket
+      baseKey: druid/segments
+    # AWS keys
+    #s3:
+    #  accessKey: AAA
+    #  secretKey: AAA
+    # Indexing service logs
+    indexer:
+      logs:
+        type: file
+        directory: var/druid/indexing-logs
+        # For S3
+        #s3Bucket: your-bucket
+        #s3Prefix: druid/indexing-logs
+    # Service discovery
+    selectors:
+      indexing:
+        serviceName: druid/overlord
+      coordinator:
+        serviceName: druid/coordinator
+    # Monitoring
+    monitoring:
+      monitors:
+      - "io.druid.java.util.metrics.JvmMonitor"
+    emitter:
+      composing:
+        emitters:
+        - "logging"
+      logging:
+        logLevel: info
+    # Storage type of double columns
+    indexing:
+      doubleStorage: double
+    javascript:
+      enabled: false
+    sql:
+      enable: false
+
+  monitoring:
+    enabled: false
+    name: debug
+    image:
+      repository: prom/statsd-exporter
+      tag: v0.9.0
+      pullPolicy: IfNotPresent

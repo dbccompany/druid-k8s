@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "historical.fullname" . }}
+  labels:
+    app: {{ template "historical.name" . }}
+    chart: {{ template "historical.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+{{ (tpl (.Files.Glob "files/*").AsConfig .) | indent 2 }}

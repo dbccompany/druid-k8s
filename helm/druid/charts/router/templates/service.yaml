@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "router.fullname" . }}
+  labels:
+    app: {{ template "router.name" . }}
+    chart: {{ template "router.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 9102
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+  selector:
+    app: {{ template "router.name" . }}
+    release: {{ .Release.Name }}

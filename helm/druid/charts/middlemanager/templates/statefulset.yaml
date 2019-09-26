@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "middlemanager.fullname" . }}
+  labels:
+    app: {{ template "middlemanager.name" . }}
+    chart: {{ template "middlemanager.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "middlemanager.name" . }}
+      release: {{ .Release.Name }}
+  serviceName: {{ template "middlemanager.fullname" . }}-headless
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  updateStrategy:
+{{ toYaml .Values.updateStrategy | indent 4 }}
+{{- if and .Values.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: tmp
+    {{- with .Values.persistence.annotations  }}
+      annotations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    spec:
+      accessModes: 
+        {{- range .Values.persistence.accessModes }}
+        - {{ . | quote }}
+        {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size | quote }}
+      storageClassName: {{ .Values.persistence.storageClassName }}
+{{- end }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ template "middlemanager.name" . }}
+        release: {{ .Release.Name }}
+      {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+      {{- end }}
+      annotations:
+        checksum/config-common: {{ .Values.global.druid | toYaml | sha256sum }}
+        checksum/config: {{ .Values.druid | toYaml | sha256sum }}
+      {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+      {{- end }}
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-common
+          configMap:
+            name: {{ .Release.Name }}-common
+        - name: {{ template "middlemanager.fullname" . }}
+          configMap:
+            name: {{ template "middlemanager.fullname" . }}
+      {{- if not .Values.persistence.enabled }}
+        - name: tmp
+          emptyDir: {}
+      {{- end }}
+{{ include "monitoring.volumes" . | indent 8 }}
+      containers:
+        - name: druid # {{ .Chart.Name }} - universal container name for druid is better
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DRUID_ROLE
+              value: middleManager
+          {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
+              #            - name: MY_POD_IP
+              #              valueFrom:
+              #                fieldRef:
+              #                  fieldPath: status.podIP
+          ports:
+            - containerPort: {{.Values.druid.port}}
+              protocol: TCP
+              name: http
+            # We should add connection between ports allocated below and druid setting
+            # druid.indexer.runner.startPort
+            # yet roll them dynamically
+            - containerPort: 8100
+              protocol: TCP
+              name: peon1
+            - containerPort: 8101
+              protocol: TCP
+              name: peon2
+            - containerPort: 8102
+              protocol: TCP
+              name: peon3
+            - containerPort: 8103
+              protocol: TCP
+              name: peon4
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: http
+          volumeMounts:
+            - mountPath: /opt/druid/conf/_common/
+              name: {{ .Release.Name }}-common
+            - mountPath: /opt/druid/conf/middleManager/
+              name: {{ template "middlemanager.fullname" . }}
+            - mountPath: /opt/druid/var/tmp
+              name: tmp
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+{{ include "monitoring.containers" . | indent 8 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
