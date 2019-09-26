@@ -1,4 +1,4 @@
-Druid @ AWS ECS
+Druid @ K8S
 ===============
 
 build container
