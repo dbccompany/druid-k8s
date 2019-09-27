@@ -27,7 +27,7 @@ spec:
       {{- end }}
       annotations:
         checksum/config-common: {{ .Values.global.druid | toYaml | sha256sum }}
-        checksum/config: {{ .Values.druid | toYaml | sha256sum }}
+#        checksum/config: {{ .Values.druid | toYaml | sha256sum }}
       {{- if .Values.podAnnotations }}
 {{ toYaml .Values.podAnnotations | indent 8 }}
       {{- end }}
@@ -36,9 +36,9 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-        - name: {{ template "coordinator.fullname" . }}
-          configMap:
-            name: {{ template "coordinator.fullname" . }}
+#        - name: {{ template "coordinator.fullname" . }}
+#          configMap:
+#            name: {{ template "coordinator.fullname" . }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better
@@ -51,6 +51,8 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
           {{- end }}
+            - name: JAVA_OPTS
+              value: {{ .Values.global.coordinator.druid.JAVA_OPTS | quote }}
               #            - name: MY_POD_IP
               #              valueFrom:
               #                fieldRef:
@@ -70,8 +72,8 @@ spec:
           volumeMounts:
             - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-            - mountPath: /opt/druid/conf/coordinator/
-              name: {{ template "coordinator.fullname" . }}
+#            - mountPath: /opt/druid/conf/coordinator/
+#              name: {{ template "coordinator.fullname" . }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{ include "monitoring.containers" . | indent 8 }}

@@ -45,7 +45,7 @@ spec:
       {{- end }}
       annotations:
         checksum/config-common: {{ .Values.global.druid | toYaml | sha256sum }}
-        checksum/config: {{ .Values.druid | toYaml | sha256sum }}
+#        checksum/config: {{ .Values.druid | toYaml | sha256sum }}
       {{- if .Values.podAnnotations }}
 {{ toYaml .Values.podAnnotations | indent 8 }}
       {{- end }}
@@ -54,9 +54,9 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-        - name: {{ template "historical.fullname" . }}
-          configMap:
-            name: {{ template "historical.fullname" . }}
+#        - name: {{ template "historical.fullname" . }}
+#          configMap:
+#            name: {{ template "historical.fullname" . }}
       {{- if not .Values.persistence.enabled }}
         - name: segment-cache
           emptyDir: {}
@@ -72,6 +72,8 @@ spec:
           {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
+            - name: JAVA_OPTS
+              value: {{ .Values.global.historical.druid.JAVA_OPTS | quote }}
           {{- end }}
               #            - name: MY_POD_IP
               #              valueFrom:
@@ -96,8 +98,8 @@ spec:
           volumeMounts:
             - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-            - mountPath: /opt/druid/conf/historical/
-              name: {{ template "historical.fullname" . }}
+#            - mountPath: /opt/druid/conf/historical/
+#              name: {{ template "historical.fullname" . }}
             - mountPath: /var/druid/segment-cache
               name: segment-cache
           resources:
