@@ -51,7 +51,6 @@ middlemanager:
         numThreads: 25
     indexer:
       runner:
-        javaOpts: "-server -Xmx3g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"
       task:
         baseTaskDir: var/druid/task
         hadoopWorkingPath: var/druid/hadoop-tmp
