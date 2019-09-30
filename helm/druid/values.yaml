@@ -41,7 +41,7 @@ broker:
       memory: 8Gi
   image:
     repository: akeks305/druid
-    tag: 1
+    tag: 2
 
 middlemanager:
   druid:
@@ -88,7 +88,7 @@ middlemanager:
     # annotations: {}
   image:
     repository: akeks305/druid
-    tag: 1
+    tag: 2
 
 overlord:
   druid:
@@ -112,7 +112,7 @@ overlord:
       memory: 3Gi
   image:
     repository: akeks305/druid
-    tag: 1
+    tag: 2
 
 coordinator:
   druid:
@@ -135,7 +135,7 @@ coordinator:
       lookupTier: __default
   image:
     repository: akeks305/druid
-    tag: 1
+    tag: 2
 
   resources:
     limits:
@@ -191,12 +191,12 @@ historical:
     # annotations: {}
   image:
     repository: akeks305/druid
-    tag: 1
+    tag: 2
 
 router:
   image:
     repository: akeks305/druid
-    tag: 1
+    tag: 2
   
 global:
   router:
