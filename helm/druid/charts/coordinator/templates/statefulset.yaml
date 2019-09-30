@@ -36,9 +36,9 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-#        - name: {{ template "coordinator.fullname" . }}
-#          configMap:
-#            name: {{ template "coordinator.fullname" . }}
+        - name: {{ template "coordinator.fullname" . }}
+          configMap:
+            name: {{ template "coordinator.fullname" . }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better
@@ -72,8 +72,8 @@ spec:
           volumeMounts:
             - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-#            - mountPath: /opt/druid/conf/coordinator/
-#              name: {{ template "coordinator.fullname" . }}
+            - mountPath: /opt/druid/conf/coordinator/
+              name: {{ template "coordinator.fullname" . }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{ include "monitoring.containers" . | indent 8 }}

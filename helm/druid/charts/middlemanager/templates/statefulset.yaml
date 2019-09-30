@@ -55,9 +55,9 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-#        - name: {{ template "middlemanager.fullname" . }}
-#          configMap:
-#            name: {{ template "middlemanager.fullname" . }}
+        - name: {{ template "middlemanager.fullname" . }}
+          configMap:
+            name: {{ template "middlemanager.fullname" . }}
       {{- if not .Values.persistence.enabled }}
         - name: tmp
           emptyDir: {}
@@ -110,8 +110,8 @@ spec:
           volumeMounts:
             - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-#            - mountPath: /opt/druid/conf/middleManager/
-#              name: {{ template "middlemanager.fullname" . }}
+            - mountPath: /opt/druid/conf/middleManager/
+              name: {{ template "middlemanager.fullname" . }}
             - mountPath: /opt/druid/var/tmp
               name: tmp
           resources:

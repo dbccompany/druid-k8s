@@ -36,9 +36,9 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-#        - name: {{ template "broker.fullname" . }}
-#          configMap:
-#            name: {{ template "broker.fullname" . }}
+        - name: {{ template "broker.fullname" . }}
+          configMap:
+            name: {{ template "broker.fullname" . }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better
@@ -76,8 +76,8 @@ spec:
           volumeMounts:
             - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-#            - mountPath: /opt/druid/conf/broker/
-#              name: {{ template "broker.fullname" . }}
+            - mountPath: /opt/druid/conf/broker/
+              name: {{ template "broker.fullname" . }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{ include "monitoring.containers" . | indent 8 }}
