@@ -39,6 +39,9 @@ broker:
     requests:
       cpu: 0.5
       memory: 8Gi
+  image:
+    repository: akeks305/druid
+    tag: 1
 
 middlemanager:
   druid:
@@ -83,6 +86,9 @@ middlemanager:
     #   - ReadWriteOnce
     # size: 10Gi
     # annotations: {}
+  image:
+    repository: akeks305/druid
+    tag: 1
 
 overlord:
   druid:
@@ -104,6 +110,9 @@ overlord:
     requests:
       cpu: 0.5
       memory: 3Gi
+  image:
+    repository: akeks305/druid
+    tag: 1
 
 coordinator:
   druid:
@@ -124,6 +133,9 @@ coordinator:
       type: batch
     lookup:
       lookupTier: __default
+  image:
+    repository: akeks305/druid
+    tag: 1
 
   resources:
     limits:
@@ -177,8 +189,35 @@ historical:
     #   - ReadWriteOnce
     # size: 10Gi
     # annotations: {}
+  image:
+    repository: akeks305/druid
+    tag: 1
 
+router:
+  image:
+    repository: akeks305/druid
+    tag: 1
+  
 global:
+  router:
+    druid:
+      JAVA_OPTS: somevalues
+  overlord:
+    druid:
+      JAVA_OPTS: somevalues
+  broker:
+    druid:
+      JAVA_OPTS: somevalues
+  coordinator:
+    druid:
+      JAVA_OPTS: somevalues
+  historical:
+    druid:
+      JAVA_OPTS: somevalues
+  middleManager:
+    druid:
+      JAVA_OPTS: somevalues
+
   druid:
     extensions:
       loadList:
