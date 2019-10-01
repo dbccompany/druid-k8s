@@ -55,9 +55,9 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-        - name: {{ template "middlemanager.fullname" . }}-jmx-exporter
+        - name: {{ .Release.Name }}-jmx-exporter
           configMap:
-            name: {{ template "middlemanager.fullname" . }}-jmx-exporter
+            name: {{ .Release.Name }}-jmx-exporter
         - name: {{ template "middlemanager.fullname" . }}
           configMap:
             name: {{ template "middlemanager.fullname" . }}

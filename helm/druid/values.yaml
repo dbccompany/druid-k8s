@@ -197,7 +197,7 @@ router:
   image:
     repository: akeks305/druid
     tag: 2
-  
+
 global:
   jmx_exporter:
     image:
