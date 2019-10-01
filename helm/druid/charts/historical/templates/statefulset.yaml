@@ -61,8 +61,18 @@ spec:
         - name: segment-cache
           emptyDir: {}
       {{- end }}
+        - name: {{ template "historical.fullname" . }}-jmx-exporter
+          configMap:
+            name: {{ template "historical.fullname" . }}-jmx-exporter
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
+        - name: jmx-exporter
+          image: "{{ .Values.global.jmx_exporter.image.repository }}:{{ .Values.global.jmx_exporter.image.tag }}"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: {{ template "broker.fullname" . }}-jmx-exporter
+              mountPath: /opt/jmx_exporter/config.yml
+              subPath: config.yml
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}

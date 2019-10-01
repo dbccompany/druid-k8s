@@ -199,6 +199,13 @@ router:
     tag: 2
   
 global:
+  jmx_exporter:
+    image:
+      repository: sscaling/jmx-prometheus-exporter
+      tag: "latest"
+    JMXPORT: 1234
+    startDelaySeconds: 30
+
   router:
     druid:
       JAVA_OPTS: somevalues

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "broker.fullname" . }}-jmx-exporter
+  labels:
+    app: {{ template "broker.name" . }}
+    chart: {{ template "broker.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  config.yml: |-
+    hostPort: 127.0.0.1:{{ .Values.global.jmx_exporter.JMXPORT }}
+    rules:
+    - pattern: ".*"
+    ssl: false
+    startDelaySeconds: {{ .Values.global.jmx_exporter.startDelaySeconds }}
