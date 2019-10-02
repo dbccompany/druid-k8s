@@ -71,7 +71,7 @@ spec:
           image: "{{ .Values.global.jmx_exporter.image.repository }}:{{ .Values.global.jmx_exporter.image.tag }}"
           imagePullPolicy: Always
           volumeMounts:
-            - name: {{ template "middlemanager.fullname" . }}-jmx-exporter
+            - name: {{ .Release.Name }}-jmx-exporter
               mountPath: /opt/jmx_exporter/config.yml
               subPath: config.yml
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better

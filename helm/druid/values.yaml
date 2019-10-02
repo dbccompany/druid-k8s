@@ -198,6 +198,11 @@ router:
     repository: akeks305/druid
     tag: 2
 
+indexer:
+  image:
+    repository: akeks305/druid
+    tag: 2
+
 global:
   jmx_exporter:
     image:
@@ -222,6 +227,9 @@ global:
     druid:
       JAVA_OPTS: somevalues
   middleManager:
+    druid:
+      JAVA_OPTS: somevalues
+  indexer:
     druid:
       JAVA_OPTS: somevalues
 
