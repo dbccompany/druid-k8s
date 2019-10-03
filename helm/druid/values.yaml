@@ -5,7 +5,10 @@
 replicaCount: 1
 
 monitoring:
-  enabled: false
+  enabled: false 
+
+repository: &rep akeks305/druid
+tag: &tag 2
 
 broker:
   druid:
@@ -40,8 +43,8 @@ broker:
       cpu: 0.5
       memory: 8Gi
   image:
-    repository: akeks305/druid
-    tag: 2
+    repository: *rep
+    tag: *tag
 
 middlemanager:
   druid:
@@ -87,8 +90,8 @@ middlemanager:
     # size: 10Gi
     # annotations: {}
   image:
-    repository: akeks305/druid
-    tag: 2
+    repository: *rep
+    tag: *tag
 
 overlord:
   druid:
@@ -134,8 +137,8 @@ coordinator:
     lookup:
       lookupTier: __default
   image:
-    repository: akeks305/druid
-    tag: 2
+    repository: *rep
+    tag: *tag
 
   resources:
     limits:
@@ -190,18 +193,18 @@ historical:
     # size: 10Gi
     # annotations: {}
   image:
-    repository: akeks305/druid
-    tag: 2
+    repository: *rep
+    tag: *tag
 
 router:
   image:
-    repository: akeks305/druid
-    tag: 2
+    repository: *rep
+    tag: *tag
 
 indexer:
   image:
-    repository: akeks305/druid
-    tag: 2
+    repository: *rep
+    tag: *tag
 
 global:
   jmx_exporter:
