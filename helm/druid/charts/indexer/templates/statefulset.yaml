@@ -32,6 +32,7 @@ spec:
         - name: {{ template "indexer.fullname" . }}
           configMap:
             name: {{ template "indexer.fullname" . }}
+{{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: jmx-exporter
           image: "{{ .Values.global.jmx_exporter.image.repository }}:{{ .Values.global.jmx_exporter.image.tag }}"
@@ -63,6 +64,7 @@ spec:
               name: {{ template "indexer.fullname" . }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+{{ include "monitoring.containers" . | indent 8 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

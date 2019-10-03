@@ -25,4 +25,4 @@ global:
 
   indexer:
     druid:
-      JAVA_OPTS: "-server -Xms3g -Xmx3g -Duser.timezone=UTC"
+      JAVA_OPTS: "-server -Xms3g -Xmx3g -Duser.timezone=UTC -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
