@@ -19,6 +19,7 @@ updateStrategy:
 podManagementPolicy: OrderedReady
 
 druid:
+  JAVA_OPTS: somevalue
   service: druid/router
   port: 8888
   router:

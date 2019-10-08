@@ -84,7 +84,7 @@ spec:
               value: {{ $value | quote }}
           {{- end }}
             - name: JAVA_OPTS
-              value: {{ .Values.global.historical.druid.JAVA_OPTS | quote }}
+              value: {{ .Values.druid.JAVA_OPTS | quote }}
               #            - name: MY_POD_IP
               #              valueFrom:
               #                fieldRef:
