@@ -4,8 +4,7 @@ FROM anapsix/alpine-java
 ARG DRUID_VERSION=0.16.0-incubating
 ENV DRUID_HOME=/opt/druid \
  DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
- PROMETHEUS_JAVAAGENT_VERSION=0.11.0 \
- AMAZON_KINESIS_CLIENT_LIBRARY=1.10.0 \
+ AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
  MYSQL_CONNECTOR_VERSION=8.0.17
 
 # Prerequisites
@@ -17,8 +16,9 @@ RUN apk add --update coreutils wget \
 RUN wget -q -O - https://www-us.apache.org/dist/incubator/druid/$DRUID_VERSION/apache-druid-$DRUID_VERSION-bin.tar.gz | tar -xzf - -C /opt \
  && ln -s /opt/apache-druid-$DRUID_VERSION $DRUID_HOME \
  && mkdir $DRUID_HOME/prometheus \
- && wget -q -O $DRUID_HOME/prometheus/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$PROMETHEUS_JAVAAGENT_VERSION/jmx_prometheus_javaagent-$PROMETHEUS_JAVAAGENT_VERSION.jar \
  && wget -q -O $DRUID_HOME/lib/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_CONNECTOR_VERSION/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar \
+ # Adding Kinesis Client Library for kinesis indexer
+ && wget -q -O $DRUID_HOME/extensions/druid-kinesis-indexing-service/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar https://repo1.maven.org/maven2/com/amazonaws/amazon-kinesis-client/$AMAZON_KINESIS_CLIENT_LIBRARY/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar \
  && rm -rf $DRUID_HOME/conf/
 
 # Install extension libraries
@@ -50,13 +50,6 @@ RUN java -cp "$DRUID_HOME/lib/*" \
     && rm -rfv ~/.m2
     # Moving mysql connector to /lib, so can it be reused by other parts of druid
     #&& mv $DRUID_HOME/extensions/mysql-metadata-storage/mysql-connector-java-*.jar $DRUID_HOME/lib
-
-# Adding Kinesis Client Library for kinesis indexer
-RUN wget -q -O $DRUID_HOME/extensions/druid-kinesis-indexing-service/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar https://repo1.maven.org/maven2/com/amazonaws/amazon-kinesis-client/$AMAZON_KINESIS_CLIENT_LIBRARY/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar
-
-# Put configuration files
-#ADD conf $DRUID_HOME/conf/
-ADD extras/prometheus_javaagent.yaml $DRUID_HOME/conf/
 
 ######## Final phase
 WORKDIR $DRUID_HOME
