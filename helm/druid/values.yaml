@@ -8,7 +8,7 @@ monitoring:
   enabled: false 
 
 repository: &rep dene14/druid
-tag: &tag 0.15.1-1
+tag: &tag 0.16.0-2
 
 broker:
   druid:
