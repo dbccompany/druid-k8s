@@ -223,28 +223,6 @@ global:
     JMXPORT: 1234
     startDelaySeconds: 30
 
-  router:
-    druid:
-      JAVA_OPTS: somevalues
-  overlord:
-    druid:
-      JAVA_OPTS: somevalues
-  broker:
-    druid:
-      JAVA_OPTS: somevalues
-  coordinator:
-    druid:
-      JAVA_OPTS: somevalues
-  historical:
-    druid:
-      JAVA_OPTS: somevalues
-  middleManager:
-    druid:
-      JAVA_OPTS: somevalues
-  indexer:
-    druid:
-      JAVA_OPTS: somevalues
-
   druid:
     extensions:
       loadList:
