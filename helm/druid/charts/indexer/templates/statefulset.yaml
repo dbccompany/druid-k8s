@@ -1,30 +1,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "overlord.fullname" . }}
+  name: {{ include "indexer.fullname" . }}
   labels:
-    app: {{ template "overlord.name" . }}
-    chart: {{ template "overlord.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "indexer.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "overlord.name" . }}
-      release: {{ .Release.Name }}
-  serviceName: {{ template "overlord.fullname" . }}-headless
-  podManagementPolicy: {{ .Values.podManagementPolicy }}
-  updateStrategy:
-{{ toYaml .Values.updateStrategy | indent 4 }}
+      app.kubernetes.io/name: {{ include "indexer.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "overlord.name" . }}
-        release: {{ .Release.Name }}
-      {{- if .Values.podLabels }}
-{{ toYaml .Values.podLabels | indent 8 }}
-      {{- end }}
+        app.kubernetes.io/name: {{ include "indexer.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
         checksum/config-common: {{ .Values.global.druid | toYaml | sha256sum }}
         checksum/config: {{ .Values.druid | toYaml | sha256sum }}
@@ -36,12 +26,12 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-        - name: {{ template "overlord.fullname" . }}
-          configMap:
-            name: {{ template "overlord.fullname" . }}
         - name: {{ .Release.Name }}-jmx-exporter
           configMap:
             name: {{ .Release.Name }}-jmx-exporter
+        - name: {{ template "indexer.fullname" . }}
+          configMap:
+            name: {{ template "indexer.fullname" . }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
         - name: jmx-exporter
@@ -56,46 +46,34 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: DRUID_ROLE
-              value: {{ template "overlord.name" . }}
+              value: {{ .Values.DRUID_ROLE | quote }}
+            - name: JAVA_OPTS
+              value: {{ .Values.druid.JAVA_OPTS | quote }}
           {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
           {{- end }}
-            - name: JAVA_OPTS
-              value: {{ .Values.druid.JAVA_OPTS | quote }}
-              #            - name: MY_POD_IP
-              #              valueFrom:
-              #                fieldRef:
-              #                  fieldPath: status.podIP
           ports:
             - name: http
-              containerPort: {{ .Values.druid.port }}
+              containerPort: 8091 
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /status
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /status
-              port: http
           volumeMounts:
             - mountPath: /opt/druid/conf/_common/
               name: {{ .Release.Name }}-common
-            - mountPath: /opt/druid/conf/overlord/
-              name: {{ template "overlord.fullname" . }}
+            - mountPath: /opt/druid/conf/indexer/
+              name: {{ template "indexer.fullname" . }}
           resources:
-{{ toYaml .Values.resources | indent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}
 {{ include "monitoring.containers" . | indent 8 }}
-    {{- with .Values.nodeSelector }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     {{- with .Values.affinity }}
       affinity:
-{{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .Values.tolerations }}
       tolerations:
-{{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}

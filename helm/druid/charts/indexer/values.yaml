@@ -1,15 +1,25 @@
-# Default values for broker.
+# Default values for indexer.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicaCount: 0
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+DRUID_ROLE: indexer
 
 image:
   repository: dene14/druid
   tag: 0.16.0-1
   pullPolicy: IfNotPresent
 
-## The StatefulSet Update Strategy which Druid will use when changes are applied.
+## The StatefulSet Update Strategy which Kafka will use when changes are applied.
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
 updateStrategy:
   type: "RollingUpdate"
@@ -19,34 +29,27 @@ updateStrategy:
 podManagementPolicy: OrderedReady
 
 druid:
-  JAVA_OPTS: somevalue
-  service: druid/router
-  port: 8888
-  router:
-    defaultBrokerServiceName: druid/broker
-    coordinatorServiceName: druid/coordinator
-    managementProxy:
-      enabled: true
-    http:
-      numConnections: 50
-      readTimeout: PT5M
-      numMaxThreads: 100
-  server:
-    http:
-      numThreads: 100
+  service: druid/indexer
+  port: 8091
 
-service:
-  type: ClusterIP
-  port: 80
+persistence:
+  enabled: false
+  # storageClassName: default
+  # accessModes:
+  #   - ReadWriteOnce
+  # size: 10Gi
+  # annotations: {}
+
 
 ingress:
   enabled: false
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  path: /
   hosts:
-    - chart-example.local
+    - host: chart-example.local
+      paths: []
+
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -58,18 +61,15 @@ resources: {}
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
+  #   cpu: 100m
+  #   memory: 128Mi
   # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
+  #   cpu: 100m
+  #   memory: 128Mi
 
 nodeSelector: {}
 
 tolerations: []
-
 affinity: {}
 
-podAnnotations: {}
-podLabels: {}
 env: []

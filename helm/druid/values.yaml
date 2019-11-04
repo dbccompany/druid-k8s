@@ -5,10 +5,14 @@
 replicaCount: 1
 
 monitoring:
-  enabled: false
+  enabled: false 
+
+repository: &rep dene14/druid
+tag: &tag 0.16.0-2
 
 broker:
   druid:
+    JAVA_OPTS: "-server -Xms8g -Xmx8g -XX:MaxDirectMemorySize=6192m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/broker
     port: 8082
     broker:
@@ -39,9 +43,13 @@ broker:
     requests:
       cpu: 0.5
       memory: 8Gi
+  image:
+    repository: *rep
+    tag: *tag
 
 middlemanager:
   druid:
+    JAVA_OPTS: "-server -Xms64m -Xmx64m -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/middleManager
     port: 8091
     worker:
@@ -83,9 +91,13 @@ middlemanager:
     #   - ReadWriteOnce
     # size: 10Gi
     # annotations: {}
+  image:
+    repository: *rep
+    tag: *tag
 
 overlord:
   druid:
+    JAVA_OPTS: "-server -Xms3g -Xmx3g -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/overlord
     port: 8090
     indexer:
@@ -104,9 +116,13 @@ overlord:
     requests:
       cpu: 0.5
       memory: 3Gi
+  image:
+    repository: akeks305/druid
+    tag: 2
 
 coordinator:
   druid:
+    JAVA_OPTS: "-server -Xms1g -Xmx1g -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dderby.stream.error.file=var/druid/derby.log -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/coordinator
     port: 8081
     coordinator:
@@ -124,6 +140,9 @@ coordinator:
       type: batch
     lookup:
       lookupTier: __default
+  image:
+    repository: *rep
+    tag: *tag
 
   resources:
     limits:
@@ -135,6 +154,7 @@ coordinator:
 
 historical:
   druid:
+    JAVA_OPTS: "-server -Xms16g -Xmx16g -XX:MaxDirectMemorySize=8192m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/historical
     port: 8083
     server:
@@ -177,8 +197,32 @@ historical:
     #   - ReadWriteOnce
     # size: 10Gi
     # annotations: {}
+  image:
+    repository: *rep
+    tag: *tag
+
+router:
+  druid:
+    JAVA_OPTS: "-server -Xms1g -Xmx1g -XX:+UseG1GC -XX:MaxDirectMemorySize=128m -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+  image:
+    repository: *rep
+    tag: *tag
+
+indexer:
+  druid:
+    JAVA_OPTS: "-server -Xms3g -Xmx3g -Duser.timezone=UTC -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+  image:
+    repository: *rep
+    tag: *tag
 
 global:
+  jmx_exporter:
+    image:
+      repository: sscaling/jmx-prometheus-exporter
+      tag: "latest"
+    JMXPORT: 1234
+    startDelaySeconds: 30
+
   druid:
     extensions:
       loadList:

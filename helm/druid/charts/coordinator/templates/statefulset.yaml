@@ -39,8 +39,18 @@ spec:
         - name: {{ template "coordinator.fullname" . }}
           configMap:
             name: {{ template "coordinator.fullname" . }}
+        - name: {{ .Release.Name }}-jmx-exporter
+          configMap:
+            name: {{ .Release.Name }}-jmx-exporter
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
+        - name: jmx-exporter
+          image: "{{ .Values.global.jmx_exporter.image.repository }}:{{ .Values.global.jmx_exporter.image.tag }}"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: {{ .Release.Name }}-jmx-exporter
+              mountPath: /opt/jmx_exporter/config.yml
+              subPath: config.yml
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -51,6 +61,8 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
           {{- end }}
+            - name: JAVA_OPTS
+              value: {{ .Values.druid.JAVA_OPTS | quote }}
               #            - name: MY_POD_IP
               #              valueFrom:
               #                fieldRef:
