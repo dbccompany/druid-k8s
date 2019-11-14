@@ -18,6 +18,10 @@ spec:
       targetPort: metrics
       protocol: TCP
       name: metrics
+    - port: 5556
+      targetPort: jmx
+      protocol: TCP
+      name: jmx
   selector:
     app: {{ template "overlord.name" . }}
     release: {{ .Release.Name }}

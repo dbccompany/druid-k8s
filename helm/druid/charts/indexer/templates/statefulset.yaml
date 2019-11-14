@@ -41,6 +41,10 @@ spec:
             - name: {{ .Release.Name }}-jmx-exporter
               mountPath: /opt/jmx_exporter/config.yml
               subPath: config.yml
+          ports:
+            - name: jmx
+              containerPort: 5556
+              protocol: TCP
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}

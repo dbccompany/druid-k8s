@@ -11,6 +11,14 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - port: 9102
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    - port: 5556
+      targetPort: jmx
+      protocol: TCP
+      name: jmx
   selector:
     app.kubernetes.io/name: {{ include "indexer.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
