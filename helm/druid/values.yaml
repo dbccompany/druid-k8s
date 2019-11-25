@@ -7,12 +7,14 @@ replicaCount: 1
 monitoring:
   enabled: false 
 
-repository: &rep dene14/druid
-tag: &tag 0.16.0-2
+#repository: &rep dene14/druid
+#tag: &tag 0.16.0-2
+repository: &rep akeks305/druid
+tag: &tag 0.16.0-2 
 
 broker:
   druid:
-    JAVA_OPTS: "-server -Xms8g -Xmx8g -XX:MaxDirectMemorySize=6192m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    JAVA_OPTS: "-server -Xms8g -Xmx8g -XX:MaxDirectMemorySize=6192m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1235 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/broker
     port: 8082
     broker:

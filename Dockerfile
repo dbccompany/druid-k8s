@@ -19,7 +19,8 @@ RUN wget -q -O - https://www-us.apache.org/dist/incubator/druid/$DRUID_VERSION/a
  && wget -q -O $DRUID_HOME/lib/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_CONNECTOR_VERSION/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar \
  # Adding Kinesis Client Library for kinesis indexer
  && wget -q -O $DRUID_HOME/extensions/druid-kinesis-indexing-service/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar https://repo1.maven.org/maven2/com/amazonaws/amazon-kinesis-client/$AMAZON_KINESIS_CLIENT_LIBRARY/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar \
- && rm -rf $DRUID_HOME/conf/
+ && rm -rf $DRUID_HOME/conf/ \
+ && wget -q  https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.12.0.jar -O  $DRUID_HOME/lib/jmx_prometheus_javaagent-0.12.0.jar
 
 # Install extension libraries
 RUN java -cp "$DRUID_HOME/lib/*" \
@@ -54,4 +55,5 @@ RUN java -cp "$DRUID_HOME/lib/*" \
 ######## Final phase
 WORKDIR $DRUID_HOME
 ADD bin/entry-alt.sh $DRUID_HOME/bin/entry.sh
+ADD bin/config.yaml /etc/config.yaml
 ENTRYPOINT /bin/bash bin/entry.sh
