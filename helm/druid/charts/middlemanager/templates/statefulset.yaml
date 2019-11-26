@@ -54,9 +54,6 @@ spec:
         - name: {{ .Release.Name }}-common
           configMap:
             name: {{ .Release.Name }}-common
-        - name: {{ .Release.Name }}-jmx-exporter
-          configMap:
-            name: {{ .Release.Name }}-jmx-exporter
         - name: {{ template "middlemanager.fullname" . }}
           configMap:
             name: {{ template "middlemanager.fullname" . }}
@@ -66,17 +63,6 @@ spec:
       {{- end }}
 {{ include "monitoring.volumes" . | indent 8 }}
       containers:
-        - name: jmx-exporter
-          image: "{{ .Values.global.jmx_exporter.image.repository }}:{{ .Values.global.jmx_exporter.image.tag }}"
-          imagePullPolicy: Always
-          volumeMounts:
-            - name: {{ .Release.Name }}-jmx-exporter
-              mountPath: /opt/jmx_exporter/config.yml
-              subPath: config.yml
-          ports:
-            - name: jmx
-              containerPort: 5556
-              protocol: TCP
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -97,6 +83,9 @@ spec:
             - containerPort: {{.Values.druid.port}}
               protocol: TCP
               name: http
+            - name: jmx
+              containerPort: 1238
+              protocol: TCP
             # We should add connection between ports allocated below and druid setting
             # druid.indexer.runner.startPort
             # yet roll them dynamically
