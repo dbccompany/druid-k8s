@@ -7,10 +7,8 @@ replicaCount: 1
 monitoring:
   enabled: false 
 
-#repository: &rep dene14/druid
-#tag: &tag 0.16.0-2
-repository: &rep akeks305/druid
-tag: &tag 0.16.0-2 
+repository: &rep dene14/druid
+tag: &tag 0.16.0-3
 
 broker:
   druid:
