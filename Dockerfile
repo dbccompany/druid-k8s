@@ -1,15 +1,15 @@
-FROM anapsix/alpine-java
+FROM openjdk:8u212-jre-alpine3.9
 
 #### Settings ####
-ARG DRUID_VERSION=0.16.0-incubating
+ARG DRUID_VERSION=0.16.1-incubating
 ENV DRUID_HOME=/opt/druid \
  DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
  AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
- MYSQL_CONNECTOR_VERSION=8.0.17 \
+ MYSQL_CONNECTOR_VERSION=5.1.38 \
  PROMETHEUS_JMX_JAVAAGENT=0.12.0
 
 # Prerequisites
-RUN apk add --update coreutils wget \
+RUN apk add --update coreutils wget bash \
         && rm -f /var/cache/apk/*
 
 ###### Druid install BEGIN ######

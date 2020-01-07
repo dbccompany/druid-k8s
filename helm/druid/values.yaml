@@ -8,11 +8,11 @@ monitoring:
   enabled: false 
 
 repository: &rep dene14/druid
-tag: &tag 0.16.0-3
+tag: &tag 0.16.1-3
 
 broker:
   druid:
-    JAVA_OPTS: "-javaagent:/opt/apache-druid-0.16.0-incubating/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms8g -Xmx8g -XX:MaxDirectMemorySize=6192m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1235 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    JAVA_OPTS: "-javaagent:/opt/druid/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms8g -Xmx8g -XX:MaxDirectMemorySize=6192m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1235 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/broker
     port: 8082
     broker:
@@ -49,7 +49,7 @@ broker:
 
 middlemanager:
   druid:
-    JAVA_OPTS: "-javaagent:/opt/apache-druid-0.16.0-incubating/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms64m -Xmx64m -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    JAVA_OPTS: "-javaagent:/opt/druid/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms64m -Xmx64m -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/middleManager
     port: 8091
     worker:
@@ -97,7 +97,7 @@ middlemanager:
 
 overlord:
   druid:
-    JAVA_OPTS: "-javaagent:/opt/apache-druid-0.16.0-incubating/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms3g -Xmx3g -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    JAVA_OPTS: "-javaagent:/opt/druid/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms3g -Xmx3g -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/overlord
     port: 8090
     indexer:
@@ -122,7 +122,7 @@ overlord:
 
 coordinator:
   druid:
-    JAVA_OPTS: "-javaagent:/opt/apache-druid-0.16.0-incubating/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms1g -Xmx1g -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dderby.stream.error.file=var/druid/derby.log -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    JAVA_OPTS: "-javaagent:/opt/druid/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms1g -Xmx1g -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dderby.stream.error.file=var/druid/derby.log -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/coordinator
     port: 8081
     coordinator:
@@ -154,7 +154,7 @@ coordinator:
 
 historical:
   druid:
-    JAVA_OPTS: "-javaagent:/opt/apache-druid-0.16.0-incubating/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms16g -Xmx16g -XX:MaxDirectMemorySize=8192m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    JAVA_OPTS: "-javaagent:/opt/druid/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms16g -Xmx16g -XX:MaxDirectMemorySize=8192m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
     service: druid/historical
     port: 8083
     server:
@@ -203,14 +203,14 @@ historical:
 
 router:
   druid:
-    JAVA_OPTS: "-javaagent:/opt/apache-druid-0.16.0-incubating/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms1g -Xmx1g -XX:+UseG1GC -XX:MaxDirectMemorySize=128m -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    JAVA_OPTS: "-javaagent:/opt/druid/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms1g -Xmx1g -XX:+UseG1GC -XX:MaxDirectMemorySize=128m -XX:+ExitOnOutOfMemoryError -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.io.tmpdir=var/tmp -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
   image:
     repository: *rep
     tag: *tag
 
 indexer:
   druid:
-    JAVA_OPTS: "-javaagent:/opt/apache-druid-0.16.0-incubating/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms3g -Xmx3g -Duser.timezone=UTC -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    JAVA_OPTS: "-javaagent:/opt/druid/lib/jmx_prometheus_javaagent-0.12.0.jar=1238:/etc/config.yaml -server -Xms3g -Xmx3g -Duser.timezone=UTC -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
   image:
     repository: *rep
     tag: *tag
