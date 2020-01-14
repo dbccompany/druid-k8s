@@ -15,7 +15,7 @@ spec:
       targetPort: metrics
       protocol: TCP
       name: metrics
-    - port: 5556
+    - port: 1238
       targetPort: jmx
       protocol: TCP
       name: jmx
