@@ -213,6 +213,7 @@ router:
   image:
     repository: *rep
     tag: *tag
+    pullPolicy: *pull
 
 indexer:
   druid:
