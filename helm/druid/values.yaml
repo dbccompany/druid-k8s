@@ -6,6 +6,13 @@ replicaCount: 1
 
 monitoring:
   enabled: false 
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    namespace: ""
+    namespaceSelector: {}
+    scrapeInterval: 10s
+    # honorLabels: true
 
 repository: &rep dene14/druid
 tag: &tag 0.16.1-3
