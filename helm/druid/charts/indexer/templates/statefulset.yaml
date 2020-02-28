@@ -10,6 +10,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "indexer.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
+  serviceName: {{ template "indexer.name" . }}-headless
   template:
     metadata:
       labels:
