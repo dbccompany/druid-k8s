@@ -1,7 +1,7 @@
 FROM openjdk:8u212-jre-alpine3.9
 
 #### Settings ####
-ARG DRUID_VERSION=0.16.1-incubating
+ARG DRUID_VERSION=0.18.0
 ENV DRUID_HOME=/opt/druid \
  DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
  AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
@@ -14,7 +14,7 @@ RUN apk add --update coreutils wget bash \
 
 ###### Druid install BEGIN ######
 
-RUN wget -q -O - https://www-us.apache.org/dist/incubator/druid/$DRUID_VERSION/apache-druid-$DRUID_VERSION-bin.tar.gz | tar -xzf - -C /opt \
+RUN wget -q -O - https://downloads.apache.org/druid/$DRUID_VERSION/apache-druid-$DRUID_VERSION-bin.tar.gz | tar -xzf - -C /opt \
  && ln -s /opt/apache-druid-$DRUID_VERSION $DRUID_HOME \
  && mkdir $DRUID_HOME/prometheus \
  && wget -q -O $DRUID_HOME/lib/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_CONNECTOR_VERSION/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar \
@@ -30,7 +30,6 @@ RUN java -cp "$DRUID_HOME/lib/*" \
          org.apache.druid.cli.Main tools pull-deps \
          # Installing contrib extensions
          -c org.apache.druid.extensions.contrib:ambari-metrics-emitter:$DRUID_VERSION \
-         -c org.apache.druid.extensions.contrib:druid-azure-extensions:$DRUID_VERSION \
          -c org.apache.druid.extensions.contrib:druid-cassandra-storage:$DRUID_VERSION \
          -c org.apache.druid.extensions.contrib:druid-cloudfiles-extensions:$DRUID_VERSION \
          -c org.apache.druid.extensions.contrib:druid-distinctcount:$DRUID_VERSION \

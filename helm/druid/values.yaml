@@ -15,7 +15,7 @@ monitoring:
     # honorLabels: true
 
 repository: &rep dene14/druid
-tag: &tag 0.16.1-3
+tag: &tag 0.18.0-1
 pullPolicy: &pull IfNotPresent
 
 broker:
