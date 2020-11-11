@@ -1,7 +1,8 @@
-FROM openjdk:8u212-jre-alpine3.9
+#FROM openjdk:8u252-jre-slim
+FROM openjdk:8u252-jre-buster
 
 #### Settings ####
-ARG DRUID_VERSION=0.18.0
+ARG DRUID_VERSION=0.20.0
 ENV DRUID_HOME=/opt/druid \
  DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
  AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
@@ -9,8 +10,9 @@ ENV DRUID_HOME=/opt/druid \
  PROMETHEUS_JMX_JAVAAGENT=0.12.0
 
 # Prerequisites
-RUN apk add --update coreutils wget bash \
-        && rm -f /var/cache/apk/*
+RUN apt-get update \
+ && apt-get -y install wget \
+ && apt-get clean
 
 ###### Druid install BEGIN ######
 
@@ -18,8 +20,8 @@ RUN wget -q -O - https://downloads.apache.org/druid/$DRUID_VERSION/apache-druid-
  && ln -s /opt/apache-druid-$DRUID_VERSION $DRUID_HOME \
  && mkdir $DRUID_HOME/prometheus \
  && wget -q -O $DRUID_HOME/lib/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_CONNECTOR_VERSION/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar \
- # Adding Kinesis Client Library for kinesis indexer
- && wget -q -O $DRUID_HOME/extensions/druid-kinesis-indexing-service/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar https://repo1.maven.org/maven2/com/amazonaws/amazon-kinesis-client/$AMAZON_KINESIS_CLIENT_LIBRARY/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar \
+# Adding Kinesis Client Library for kinesis indexer
+  && wget -q -O $DRUID_HOME/extensions/druid-kinesis-indexing-service/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar https://repo1.maven.org/maven2/com/amazonaws/amazon-kinesis-client/$AMAZON_KINESIS_CLIENT_LIBRARY/amazon-kinesis-client-$AMAZON_KINESIS_CLIENT_LIBRARY.jar \
  && rm -rf $DRUID_HOME/conf/ \
  && wget -q  https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$PROMETHEUS_JMX_JAVAAGENT/jmx_prometheus_javaagent-$PROMETHEUS_JMX_JAVAAGENT.jar -O  $DRUID_HOME/lib/jmx_prometheus_javaagent-$PROMETHEUS_JMX_JAVAAGENT.jar
 
