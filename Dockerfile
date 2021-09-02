@@ -1,13 +1,12 @@
-#FROM openjdk:8u252-jre-slim
-FROM openjdk:8u252-jre-buster
+FROM openjdk:8u302-jre-buster
 
 #### Settings ####
-ARG DRUID_VERSION=0.20.0
+ARG DRUID_VERSION=0.20.2
 ENV DRUID_HOME=/opt/druid \
- DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
- AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
- MYSQL_CONNECTOR_VERSION=5.1.38 \
- PROMETHEUS_JMX_JAVAAGENT=0.12.0
+    DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
+    AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
+    MYSQL_CONNECTOR_VERSION=8.0.26 \
+    PROMETHEUS_JMX_JAVAAGENT=0.12.0
 
 # Prerequisites
 RUN apt-get update \
