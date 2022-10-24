@@ -5,7 +5,7 @@ ARG DRUID_VERSION=24.0.0
 ENV DRUID_HOME=/opt/druid \
     DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
     AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
-    MYSQL_CONNECTOR_VERSION=8.0.30 \
+    MYSQL_CONNECTOR_VERSION=5.1.49 \
     PROMETHEUS_JMX_JAVAAGENT=0.12.0
 
 ###### Druid install BEGIN ######
