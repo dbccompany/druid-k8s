@@ -1,7 +1,7 @@
-FROM openjdk:8u312-jre-buster
+FROM openjdk:8u342-jre-buster
 
 #### Settings ####
-ARG DRUID_VERSION=0.22.1
+ARG DRUID_VERSION=0.23.0
 ENV DRUID_HOME=/opt/druid \
     DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
     AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
