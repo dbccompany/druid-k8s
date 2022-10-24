@@ -1,11 +1,11 @@
-FROM openjdk:8u302-jre-buster
+FROM openjdk:8u312-jre-buster
 
 #### Settings ####
-ARG DRUID_VERSION=0.20.2
+ARG DRUID_VERSION=0.22.1
 ENV DRUID_HOME=/opt/druid \
     DRUID_MAVEN_REPO=https://metamx.artifactoryonline.com/metamx/libs-releases \
     AMAZON_KINESIS_CLIENT_LIBRARY=1.11.2 \
-    MYSQL_CONNECTOR_VERSION=8.0.26 \
+    MYSQL_CONNECTOR_VERSION=5.1.48 \
     PROMETHEUS_JMX_JAVAAGENT=0.12.0
 
 # Prerequisites
@@ -50,8 +50,11 @@ RUN java -cp "$DRUID_HOME/lib/*" \
          -c org.apache.druid.extensions.contrib:druid-tdigestsketch:$DRUID_VERSION \
     # Cleaning up
     && rm -rfv ~/.m2
-    # Moving mysql connector to /lib, so can it be reused by other parts of druid
-    #&& mv $DRUID_HOME/extensions/mysql-metadata-storage/mysql-connector-java-*.jar $DRUID_HOME/lib
+    # Linking mysql connector to mysql-metadata-storage extension directory
+    #&& ln -s $DRUID_HOME/lib/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar \
+    #         $DRUID_HOME/extensions/mysql-metadata-storage/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar \
+    #&& ln -s $DRUID_HOME/lib/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar \
+    #         $DRUID_HOME/extensions/druid-lookups-cached-global/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar
 
 ######## Final phase
 WORKDIR $DRUID_HOME
