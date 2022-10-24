@@ -62,6 +62,9 @@ spec:
           emptyDir: {}
       {{- end }}
 {{ include "monitoring.volumes" . | indent 8 }}
+      {{- if .Values.global.serviceAccount.create }}
+      serviceAccountName: {{ default .Release.Name .Values.global.serviceAccount.name }}
+      {{- end }}
       containers:
         - name: druid # {{ .Chart.Name }} - universal container name for druid is better
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

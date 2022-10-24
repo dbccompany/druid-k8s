@@ -46,12 +46,15 @@ service:
 
 ingress:
   enabled: false
+  className: ""
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  path: /
   hosts:
-    - chart-example.local
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -69,6 +72,13 @@ resources: {}
   #  cpu: 100m
   #  memory: 128Mi
 
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
 nodeSelector: {}
 
 tolerations: []
@@ -77,4 +87,4 @@ affinity: {}
 
 podAnnotations: {}
 podLabels: {}
-env: []
+env: {}

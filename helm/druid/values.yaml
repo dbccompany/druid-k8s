@@ -230,6 +230,7 @@ indexer:
     tag: *tag
     pullPolicy: *pull
 
+
 global:
   #jmx_exporter:
     #image:
@@ -307,6 +308,11 @@ global:
     sql:
       enable: false
 
+  serviceAccount:
+    create: false
+    annotations: {}
+    name: ""
+
   monitoring:
     enabled: false
     name: debug
@@ -314,3 +320,4 @@ global:
       repository: prom/statsd-exporter
       tag: v0.9.0
       pullPolicy: IfNotPresent
+
